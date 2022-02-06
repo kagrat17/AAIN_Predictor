@@ -1,0 +1,25 @@
+7EKG: structure of sars-cov-2 beta variant spike receptor-binding domain complexed with human ace2
+
+Total Contacts: 15
+Cutoff Distance: 7 Angstroms
+
+7 RBD Contact Residues: ALA475(1) GLY476(2) THR500(2) TYR501(3) GLY502(4) GLY504(1) TYR505(2) 
+6 ACE2 Contact Residues: GLN24(2) SER19(1) GLY326(2) ASP355(3) LYS353(3) GLY354(4) 
+
+RBD Residue    ACE2 Residues
+-------------  ---------------
+ALA475(1)      GLN24 6.16
+GLY476(2)      SER19 6.454
+               GLN24 6.44
+THR500(2)      GLY326 6.629
+               ASP355 6.63
+TYR501(3)      LYS353 5.576
+               GLY354 5.776
+               ASP355 5.45
+GLY502(4)      GLY326 6.515
+               LYS353 6.073
+               GLY354 4.065
+               ASP355 5.3
+GLY504(1)      GLY354 6.89
+TYR505(2)      LYS353 5.812
+               GLY354 6.60
