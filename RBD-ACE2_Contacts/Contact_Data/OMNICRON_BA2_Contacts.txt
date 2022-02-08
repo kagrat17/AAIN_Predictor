@@ -1,4 +1,4 @@
-OMNICRON_BA2: omnicron ba.2 variant rbd-ace2 complex with swiss modeling useing 7wbl template
+OMNICRON_BA2: omnicron ba.2 variant rbd-ace2 complex with swiss modeling using 7wbl template
 
 Total Contacts: 15
 Cutoff Distance: 7 Angstroms
