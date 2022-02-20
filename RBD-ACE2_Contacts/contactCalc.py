@@ -69,6 +69,9 @@ for i in range(len(data[0])):
     arr = [str(data[0][i]) + "(" + str(data[1][i]) + ")", data[2][i]]
     dataInRows.append(arr)
 
+# same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
+contactTypes = []
+
 f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
 f.write("Total Contacts: " + str(countTot) + "\n")
 f.write("Cutoff Distance: 7 Angstroms" + "\n\n")
