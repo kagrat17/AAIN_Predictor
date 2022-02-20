@@ -24,3 +24,12 @@ GLY502(4)      GLY326 6.558
 GLY504(1)      GLY354 6.7
 TYR505(2)      LYS353 5.74
                GLY354 6.6
+
+Contact Types
+Same charge: 0
+Opposite charge: 0
+Charged-polar: 3
+Charged-nonpolar: 4
+Polar-polar: 0
+Polar-nonpolar: 5
+Nonpolar-nonpolar: 4

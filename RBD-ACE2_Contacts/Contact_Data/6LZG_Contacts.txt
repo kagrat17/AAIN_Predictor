@@ -1,0 +1,37 @@
+6LZG: structure of novel coronavirus spike receptor-binding domain complexed with its receptor ace2
+
+Total Contacts: 18
+Cutoff Distance: 7 Angstroms
+
+9 RBD Contact Residues: ALA475(2) GLY476(2) ASN487(1) GLY496(1) THR500(2) ASN501(3) GLY502(4) GLY504(1) TYR505(2) 
+8 ACE2 Contact Residues: GLN24(3) THR27(1) SER19(1) ASP38(1) GLY326(2) ASP355(3) LYS353(3) GLY354(4) 
+
+RBD Residue    ACE2 Residues
+-------------  ---------------
+ALA475(2)      GLN24 6.114
+               THR27 6.9
+GLY476(2)      SER19 6.147
+               GLN24 6.3
+ASN487(1)      GLN24 6.96
+GLY496(1)      ASP38 6.73
+THR500(2)      GLY326 6.654
+               ASP355 6.66
+ASN501(3)      LYS353 5.48
+               GLY354 5.708
+               ASP355 5.31
+GLY502(4)      GLY326 6.658
+               LYS353 6.035
+               GLY354 4.041
+               ASP355 5.31
+GLY504(1)      GLY354 6.80
+TYR505(2)      LYS353 5.787
+               GLY354 6.
+
+Contact Types
+Same charge: 0
+Opposite charge: 0
+Charged-polar: 3
+Charged-nonpolar: 4
+Polar-polar: 1
+Polar-nonpolar: 6
+Nonpolar-nonpolar: 4

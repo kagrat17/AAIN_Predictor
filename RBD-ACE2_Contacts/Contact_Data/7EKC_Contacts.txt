@@ -1,4 +1,4 @@
-7EKC: structure of sars-cov-2 gamma variant spike receptor-binding domain complexed with human ace2
+7ekc: structure of sars-cov-2 gamma variant spike receptor-binding domain complexed with human ace2
 
 Total Contacts: 16
 Cutoff Distance: 7 Angstroms
@@ -24,3 +24,12 @@ GLY502(4)      GLY326 6.444
 GLY504(1)      GLY354 6.71
 TYR505(2)      LYS353 5.776
                GLY354 6.5
+
+Contact Types
+Same charge: 0
+Opposite charge: 0
+Charged-polar: 1
+Charged-nonpolar: 5
+Polar-polar: 0
+Polar-nonpolar: 5
+Nonpolar-nonpolar: 5

@@ -1,0 +1,19 @@
+2AJF: structure of sars coronavirus spike receptor-binding domain complexed with its receptor
+
+Total Contacts: 0
+Cutoff Distance: 7 Angstroms
+
+0 RBD Contact Residues: 
+0 ACE2 Contact Residues: 
+
+RBD Residue    ACE2 Residues
+-------------  ---------------
+
+Contact Types
+Same charge: 0
+Opposite charge: 0
+Charged-polar: 0
+Charged-nonpolar: 0
+Polar-polar: 0
+Polar-nonpolar: 0
+Nonpolar-nonpolar: 0
