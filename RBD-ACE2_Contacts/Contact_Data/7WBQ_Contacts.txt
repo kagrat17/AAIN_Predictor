@@ -29,8 +29,8 @@ TYR505(2)      LYS353 5.648
 Contact Types
 Same charge: 0
 Opposite charge: 0
-Charged-polar: 3
-Charged-nonpolar: 4
+Charged-polar: 4
+Charged-nonpolar: 3
 Polar-polar: 1
-Polar-nonpolar: 6
-Nonpolar-nonpolar: 3
+Polar-nonpolar: 7
+Nonpolar-nonpolar: 2

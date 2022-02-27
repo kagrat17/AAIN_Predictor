@@ -27,10 +27,10 @@ HIS505(2)      LYS353 5.715
                GLY354 6.61
 
 Contact Types
-Same charge: 1
+Same charge: 0
 Opposite charge: 0
-Charged-polar: 1
-Charged-nonpolar: 5
+Charged-polar: 4
+Charged-nonpolar: 2
 Polar-polar: 1
-Polar-nonpolar: 4
-Nonpolar-nonpolar: 5
+Polar-nonpolar: 6
+Nonpolar-nonpolar: 4

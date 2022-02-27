@@ -41,9 +41,9 @@ contactTypes = [0,0,0,0,0,0,0]
 # RBD residue, count contacts with ACE2, list of contacted residues
 data = [[], [], []]
 
-nonpolar = ["GLY", "ALA", "PRO", "VAL", "LEU", "ILE", "MET", "PHE", "TYR", "TRP"]
-polar = ["SER", "THR", "CYS", "ASN", "GLN"]
-positive = ["LYS", "ARG", "HIS"]
+nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE"]
+polar = ["SER", "THR", "CYS", "ASN", "GLN", "LEU", "TYR", "TRP", "HIS"]
+positive = ["LYS", "ARG"]
 negative = ["ASP", "GLU"]
 
 countTot = 0
