@@ -1,5 +1,5 @@
 ```
-ΔG (kcal mol-1): 11.5
+ΔG (kcal mol-1): -11.5
 Kd (M) at 25.0 ℃: 3.6E-09
 
 Number of Interfacial Contacts (ICs) per property:
