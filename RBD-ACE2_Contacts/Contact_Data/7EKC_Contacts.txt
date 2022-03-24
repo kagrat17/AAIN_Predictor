@@ -2,6 +2,7 @@
 
 Total Contacts: 16
 Cutoff Distance: 7 Angstroms
+Hydropathy index score (multiplication): 2.842004320930669
 
 7 RBD Contact Residues: ALA475(2) GLY476(2) THR500(2) TYR501(3) GLY502(4) GLY504(1) TYR505(2) 
 7 ACE2 Contact Residues: GLN24(2) THR27(1) SER19(1) GLY326(2) ASP355(3) LYS353(3) GLY354(4) 

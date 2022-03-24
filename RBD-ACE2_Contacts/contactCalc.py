@@ -46,7 +46,31 @@ polar = ["SER", "THR", "CYS", "ASN", "GLN", "LEU", "TYR", "TRP", "HIS"]
 positive = ["LYS", "ARG"]
 negative = ["ASP", "GLU"]
 
+hydroIndexes = {
+    "ALA": 1.80,
+    "ARG": -4.50,
+    "ASN": -3.50,
+    "ASP":	-3.50,
+    "CYS":	2.50,
+    "GLN":	-3.50,
+    "GLU":	-3.50,
+    "GLY":	-0.40,
+    "HIS":	-3.20,
+    "ILE":	4.50,
+    "LEU":	3.80,
+    "LYS":	-3.90,
+    "MET":	1.90,
+    "PHE":	2.80,
+    "PRO":	1.60,
+    "SER":	-0.80,
+    "THR":	-0.70,
+    "TRP":	-0.90,
+    "TYR":	-1.30,
+    "VAL":	4.20
+}
+
 countTot = 0
+hiScoreMult = 0.0
 for i in range(len(cAlphaE[0])):
     count = 0
     contacts = ""
@@ -77,6 +101,16 @@ for i in range(len(cAlphaE[0])):
                 contactTypes[5] += 1
             elif nonpolarA and nonpolarE:
                 contactTypes[6] += 1
+            
+            h1 = hydroIndexes[cAlphaE[0][i][:3]]
+            h2 = hydroIndexes[cAlphaA[0][j][:3]]
+            score = h1*h2/(cAlphaE[1][i] - cAlphaA[1][j])
+            if (positiveA and positiveE or negativeA and negativeE) and score > 0:
+                score *= -1
+            elif (negativeE and positiveA or positiveA and negativeE) and score < 0:
+                score *= -1
+            hiScoreMult += score
+
     contacts = contacts[:len(contacts)-2]
     if count > 0:
         data[0].append(cAlphaE[0][i])
@@ -99,7 +133,8 @@ for i in range(len(data[0])):
 
 f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
 f.write("Total Contacts: " + str(countTot) + "\n")
-f.write("Cutoff Distance: 7 Angstroms" + "\n\n")
+f.write("Cutoff Distance: 7 Angstroms" + "\n")
+f.write("Hydropathy index score (multiplication): " + str(hiScoreMult) + "\n\n")
 f.write(str(len(data[0])) + " RBD Contact Residues: ")
 for i in range(len(data[0])):
     f.write(str(data[0][i]) + "(" + str(data[1][i]) + ") ")
