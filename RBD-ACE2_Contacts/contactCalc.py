@@ -1,7 +1,5 @@
 import os
-from tkinter import W
 from tabulate import tabulate
-import numpy as np
 from Bio.PDB import *
 
 pdbFile = input("Enter the PDB file to calculate contacts for (exclude file extension): ")
@@ -14,31 +12,31 @@ f = open(cwd + "/RBD-ACE2_Contacts/Contact_Data/" + pdbFile + "_Contacts.txt", m
 
 models = list(model)
 chains = list(models[0].get_chains())
-residuesA = list(chains[0].get_residues())
-residuesE = list(chains[1].get_residues())
+residuesFirst = list(chains[0].get_residues())
+residuesSecond = list(chains[1].get_residues())
 # residue identifier, atom
-cAlphaA = [[], []]
-cAlphaE = [[], []]
-for i in range(len(residuesA)):
-    atoms = list(residuesA[i].get_atoms())
+cAlphaFirst = [[], []]
+cAlphaSecond = [[], []]
+for i in range(len(residuesFirst)):
+    atoms = list(residuesFirst[i].get_atoms())
     for j in range(len(atoms)):
         if atoms[j].get_id() == "CA":
-            cAlphaA[0].append(residuesA[i].get_resname() +
-                              str(residuesA[i].get_id()[1]))
-            cAlphaA[1].append(atoms[j])
+            cAlphaFirst[0].append(residuesFirst[i].get_resname() +
+                              str(residuesFirst[i].get_id()[1]))
+            cAlphaFirst[1].append(atoms[j])
             break
-for i in range(len(residuesE)):
-    atoms = list(residuesE[i].get_atoms())
+for i in range(len(residuesSecond)):
+    atoms = list(residuesSecond[i].get_atoms())
     for j in range(len(atoms)):
         if atoms[j].get_id() == "CA":
-            cAlphaE[0].append(residuesE[i].get_resname() +
-                              str(residuesE[i].get_id()[1]))
-            cAlphaE[1].append(atoms[j])
+            cAlphaSecond[0].append(residuesSecond[i].get_resname() +
+                              str(residuesSecond[i].get_id()[1]))
+            cAlphaSecond[1].append(atoms[j])
             break
 
 # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
 contactTypes = [0,0,0,0,0,0,0]
-# RBD residue, count contacts with ACE2, list of contacted residues
+# Second chain residue, count contacts with first chain, list of contacted residues
 data = [[], [], []]
 
 nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE"]
@@ -71,23 +69,23 @@ hydroIndexes = {
 
 countTot = 0
 hiScoreMult = 0.0
-for i in range(len(cAlphaE[0])):
+for i in range(len(cAlphaSecond[0])):
     count = 0
     contacts = ""
-    for j in range(len(cAlphaA[0])):
-        if(cAlphaE[1][i] - cAlphaA[1][j]) <= 7:
+    for j in range(len(cAlphaFirst[0])):
+        if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= 7:
             count += 1
             countTot += 1
-            contacts += cAlphaA[0][j] + " " + str(int((cAlphaE[1][i] - cAlphaA[1][j])*1000)/1000) + "\n"
+            contacts += cAlphaFirst[0][j] + " " + str(int((cAlphaSecond[1][i] - cAlphaFirst[1][j])*1000)/1000) + "\n"
             # classifying contacts
-            nonpolarA = cAlphaA[0][j][:3] in nonpolar
-            nonpolarE = cAlphaE[0][i][:3] in nonpolar
-            polarA = cAlphaA[0][j][:3] in polar
-            polarE = cAlphaE[0][i][:3] in polar
-            positiveA = cAlphaA[0][j][:3] in positive
-            positiveE = cAlphaE[0][i][:3] in positive
-            negativeA = cAlphaA[0][j][:3] in negative
-            negativeE = cAlphaE[0][i][:3] in negative
+            nonpolarA = cAlphaFirst[0][j][:3] in nonpolar
+            nonpolarE = cAlphaSecond[0][i][:3] in nonpolar
+            polarA = cAlphaFirst[0][j][:3] in polar
+            polarE = cAlphaSecond[0][i][:3] in polar
+            positiveA = cAlphaFirst[0][j][:3] in positive
+            positiveE = cAlphaSecond[0][i][:3] in positive
+            negativeA = cAlphaFirst[0][j][:3] in negative
+            negativeE = cAlphaSecond[0][i][:3] in negative
             if positiveA and positiveE or negativeA and negativeE:
                 contactTypes[0] += 1
             elif negativeE and positiveA or positiveA and negativeE:
@@ -104,9 +102,9 @@ for i in range(len(cAlphaE[0])):
                 contactTypes[6] += 1
             
             # custom hydropathy scoring
-            h1 = hydroIndexes[cAlphaE[0][i][:3]]
-            h2 = hydroIndexes[cAlphaA[0][j][:3]]
-            score = h1*h2/(cAlphaE[1][i] - cAlphaA[1][j])
+            h1 = hydroIndexes[cAlphaSecond[0][i][:3]]
+            h2 = hydroIndexes[cAlphaFirst[0][j][:3]]
+            score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
             if (positiveA and positiveE or negativeA and negativeE) and score > 0:
                 score *= -1
             elif (negativeE and positiveA or positiveA and negativeE) and score < 0:
@@ -115,7 +113,7 @@ for i in range(len(cAlphaE[0])):
 
     contacts = contacts[:len(contacts)-2]
     if count > 0:
-        data[0].append(cAlphaE[0][i])
+        data[0].append(cAlphaSecond[0][i])
         data[1].append(count)
         data[2].append(contacts)
 
@@ -137,15 +135,15 @@ f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
 f.write("Total Contacts: " + str(countTot) + "\n")
 f.write("Cutoff Distance: 7 Angstroms" + "\n")
 f.write("Hydropathy index score (multiplication): " + str(hiScoreMult) + "\n\n")
-f.write(str(len(data[0])) + " RBD Contact Residues: ")
+f.write(str(len(data[0])) + " Chain " + chains[1].id + " Contact Residues: ")
 for i in range(len(data[0])):
     f.write(str(data[0][i]) + "(" + str(data[1][i]) + ") ")
 f.write("\n")
-f.write(str(len(aceRes)) + " ACE2 Contact Residues: ")
+f.write(str(len(aceRes)) + " Chain " + chains[0].id + " Contact Residues: ")
 for c in aceRes:
     f.write(str(c.split(" ")[0]) + "(" + str(aceRes[c]) + ") ")
 f.write("\n\n")
-f.write(tabulate((dataInRows), headers=["RBD Residue", "ACE2 Residues"]))
+f.write(tabulate((dataInRows), headers=["Chain " + chains[1].id, "Chain " + chains[0].id]))
 f.write("\n\n")
 
 f.write("Contact Types\n")

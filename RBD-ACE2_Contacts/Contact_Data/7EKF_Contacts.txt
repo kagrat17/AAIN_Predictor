@@ -4,27 +4,27 @@ Total Contacts: 16
 Cutoff Distance: 7 Angstroms
 Hydropathy index score (multiplication): 4.78169897971623
 
-8 RBD Contact Residues: ALA475(1) GLY476(2) ASN487(1) THR500(2) TYR501(3) GLY502(4) GLY504(1) TYR505(2) 
-6 ACE2 Contact Residues: GLN24(3) SER19(1) GLY326(2) ASP355(3) LYS353(3) GLY354(4) 
+8 Chain B Contact Residues: ALA475(1) GLY476(2) ASN487(1) THR500(2) TYR501(3) GLY502(4) GLY504(1) TYR505(2) 
+6 Chain A Contact Residues: GLN24(3) SER19(1) GLY326(2) ASP355(3) LYS353(3) GLY354(4) 
 
-RBD Residue    ACE2 Residues
--------------  ---------------
-ALA475(1)      GLN24 6.00
-GLY476(2)      SER19 6.827
-               GLN24 6.39
-ASN487(1)      GLN24 6.97
-THR500(2)      GLY326 6.548
-               ASP355 6.63
-TYR501(3)      LYS353 5.614
-               GLY354 5.713
-               ASP355 5.42
-GLY502(4)      GLY326 6.763
-               LYS353 5.935
-               GLY354 3.893
-               ASP355 5.34
-GLY504(1)      GLY354 6.72
-TYR505(2)      LYS353 5.821
-               GLY354 6.53
+Chain B    Chain A
+---------  ------------
+ALA475(1)  GLN24 6.00
+GLY476(2)  SER19 6.827
+           GLN24 6.39
+ASN487(1)  GLN24 6.97
+THR500(2)  GLY326 6.548
+           ASP355 6.63
+TYR501(3)  LYS353 5.614
+           GLY354 5.713
+           ASP355 5.42
+GLY502(4)  GLY326 6.763
+           LYS353 5.935
+           GLY354 3.893
+           ASP355 5.34
+GLY504(1)  GLY354 6.72
+TYR505(2)  LYS353 5.821
+           GLY354 6.53
 
 Contact Types
 Same charge: 0
