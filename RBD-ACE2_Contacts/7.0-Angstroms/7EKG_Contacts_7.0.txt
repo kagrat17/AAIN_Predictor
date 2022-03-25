@@ -1,7 +1,7 @@
 7EKG: structure of sars-cov-2 beta variant spike receptor-binding domain complexed with human ace2
 
 Total Contacts: 15
-Cutoff Distance: 7 Angstroms
+Cutoff Distance: 7.0 Angstroms
 Hydropathy index score (multiplication): 3.047202603754894
 
 7 Chain B Contact Residues: ALA475(1) GLY476(2) THR500(2) TYR501(3) GLY502(4) GLY504(1) TYR505(2) 

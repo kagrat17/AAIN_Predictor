@@ -1,7 +1,7 @@
 7WBP: crystal structure of the receptor binding domain of sars-cov-2 omicron variant spike glycoprotein in complex with its receptor human ace2
 
 Total Contacts: 17
-Cutoff Distance: 7 Angstroms
+Cutoff Distance: 7.0 Angstroms
 Hydropathy index score (multiplication): 4.647348618102223
 
 9 Chain B Contact Residues: ALA475(1) GLY476(2) ASN477(1) THR500(2) TYR501(3) GLY502(4) VAL503(1) GLY504(1) HIS505(2) 

@@ -1,7 +1,7 @@
 6M0J: crystal structure of sars-cov-2 spike receptor-binding domain bound with ace2
 
 Total Contacts: 16
-Cutoff Distance: 7 Angstroms
+Cutoff Distance: 7.0 Angstroms
 Hydropathy index score (multiplication): 6.47531191755437
 
 8 Chain E Contact Residues: ALA475(1) GLY476(2) GLY496(1) THR500(2) ASN501(3) GLY502(4) GLY504(1) TYR505(2) 

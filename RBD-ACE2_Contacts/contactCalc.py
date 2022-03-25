@@ -3,12 +3,13 @@ from tabulate import tabulate
 from Bio.PDB import *
 
 pdbFile = input("Enter the PDB file to calculate contacts for (exclude file extension): ")
+cutoff = float(input("Enter the cutoff distance for contacts (in Angstroms): "))
 
 cwd = os.getcwd()
 parser = PDBParser(PERMISSIVE=True, QUIET=True)
 struct = parser.get_structure(pdbFile, cwd + "/PDB_Files/" + pdbFile + ".pdb")
 model = struct.get_models()
-f = open(cwd + "/RBD-ACE2_Contacts/Contact_Data/" + pdbFile + "_Contacts.txt", mode="w")
+f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
 
 models = list(model)
 chains = list(models[0].get_chains())
@@ -73,7 +74,7 @@ for i in range(len(cAlphaSecond[0])):
     count = 0
     contacts = ""
     for j in range(len(cAlphaFirst[0])):
-        if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= 7:
+        if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= cutoff:
             count += 1
             countTot += 1
             contacts += cAlphaFirst[0][j] + " " + str(int((cAlphaSecond[1][i] - cAlphaFirst[1][j])*1000)/1000) + "\n"
@@ -133,7 +134,7 @@ for i in range(len(data[0])):
 
 f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
 f.write("Total Contacts: " + str(countTot) + "\n")
-f.write("Cutoff Distance: 7 Angstroms" + "\n")
+f.write("Cutoff Distance: " + str(cutoff) + " Angstroms" + "\n")
 f.write("Hydropathy index score (multiplication): " + str(hiScoreMult) + "\n\n")
 f.write(str(len(data[0])) + " Chain " + chains[1].id + " Contact Residues: ")
 for i in range(len(data[0])):

@@ -1,7 +1,7 @@
 7WBQ: crystal structure of the receptor binding domain of sars-cov-2 delta variant spike glycoprotein in complex with its receptor human ace2
 
 Total Contacts: 17
-Cutoff Distance: 7 Angstroms
+Cutoff Distance: 7.0 Angstroms
 Hydropathy index score (multiplication): 6.889380882699143
 
 8 Chain B Contact Residues: ALA475(1) GLY476(2) ASN487(2) GLY496(1) THR500(2) ASN501(3) GLY502(4) TYR505(2) 
