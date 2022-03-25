@@ -79,6 +79,7 @@ for i in range(len(cAlphaE[0])):
             count += 1
             countTot += 1
             contacts += cAlphaA[0][j] + " " + str(int((cAlphaE[1][i] - cAlphaA[1][j])*1000)/1000) + "\n"
+            # classifying contacts
             nonpolarA = cAlphaA[0][j][:3] in nonpolar
             nonpolarE = cAlphaE[0][i][:3] in nonpolar
             polarA = cAlphaA[0][j][:3] in polar
@@ -102,6 +103,7 @@ for i in range(len(cAlphaE[0])):
             elif nonpolarA and nonpolarE:
                 contactTypes[6] += 1
             
+            # custom hydropathy scoring
             h1 = hydroIndexes[cAlphaE[0][i][:3]]
             h2 = hydroIndexes[cAlphaA[0][j][:3]]
             score = h1*h2/(cAlphaE[1][i] - cAlphaA[1][j])
