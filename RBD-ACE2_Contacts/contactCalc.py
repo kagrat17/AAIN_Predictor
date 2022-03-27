@@ -109,9 +109,15 @@ def calculate(pdbFile, cutoff):
                 # custom hydropathy scoring
                 h1 = hydroIndexes[cAlphaSecond[0][i][:3]]
                 h2 = hydroIndexes[cAlphaFirst[0][j][:3]]
+                h1 = abs(h1); h2 = abs(h2)
+
                 score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
                 score = abs(score)
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
+                    score *= -1
+                elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
+                    score *= -1
+                elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
                     score *= -1
                 hiScoreMult += score
 
