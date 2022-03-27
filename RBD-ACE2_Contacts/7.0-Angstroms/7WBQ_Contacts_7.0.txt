@@ -2,7 +2,8 @@
 
 Total Contacts: 17
 Cutoff Distance: 7.0 Angstroms
-Hydropathy index score (multiplication): 6.889380882699143
+Hydropathy index score (multiplication): 11.854948513854833
+Hydropathy index score (addition): 1.2069233631810488
 
 8 Chain B Contact Residues: ALA475(1) GLY476(2) ASN487(2) GLY496(1) THR500(2) ASN501(3) GLY502(4) TYR505(2) 
 8 Chain A Contact Residues: GLN24(3) SER19(1) PHE28(1) ASP38(1) GLY326(2) ASP355(3) LYS353(3) GLY354(3) 
