@@ -12,7 +12,7 @@ def calculate(pdbFile, cutoff):
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(pdbFile, cwd + "/PDB_Files/" + pdbFile + ".pdb")
     model = struct.get_models()
-    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
+    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Cornette/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
 
     models = list(model)
     chains = list(models[0].get_chains())
@@ -48,7 +48,7 @@ def calculate(pdbFile, cutoff):
     positive = ["LYS", "ARG"]
     negative = ["ASP", "GLU"]
 
-    hydroIndexes = {
+    hydroIndexesKyte = {
         "ALA": 1.80,
         "ARG": -4.50,
         "ASN": -3.50,
@@ -69,6 +69,52 @@ def calculate(pdbFile, cutoff):
         "TRP":	-0.90,
         "TYR":	-1.30,
         "VAL":	4.20
+    }
+
+    hydroIndexesEngelman = {
+        "ALA": 1.60,
+        "ARG": -12.30,
+        "ASN": -4.80,
+        "ASP":	-9.20,
+        "CYS":	2.00,
+        "GLN":	-4.10,
+        "GLU":	-8.20,
+        "GLY":	1.00,
+        "HIS":	-3.00,
+        "ILE":	3.10,
+        "LEU":	2.80,
+        "LYS":	-8.80,
+        "MET":	3.40,
+        "PHE":	3.70,
+        "PRO":	-0.20,
+        "SER":	0.60,
+        "THR":  1.20,
+        "TRP":	1.90,
+        "TYR":	-0.70,
+        "VAL":	2.60
+    }
+
+    hydroIndexesCornette = {
+        "ALA": 0.20,
+        "ARG": 1.40,
+        "ASN": -0.50,
+        "ASP":	-3.10,
+        "CYS":	4.10,
+        "GLN":	-2.80,
+        "GLU":	-1.80,
+        "GLY":	0.00,
+        "HIS":	0.50,
+        "ILE":	4.80,
+        "LEU":	5.70,
+        "LYS":	-3.10,
+        "MET":	4.20,
+        "PHE":	4.40,
+        "PRO":	-2.20,
+        "SER":	-0.50,
+        "THR":  -1.90,
+        "TRP":	1.00,
+        "TYR":	3.20,
+        "VAL":	4.70
     }
 
     countTot = 0
@@ -107,8 +153,8 @@ def calculate(pdbFile, cutoff):
                     contactTypes[6] += 1
                 
                 # custom hydropathy scoring
-                h1 = hydroIndexes[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexes[cAlphaFirst[0][j][:3]]
+                h1 = hydroIndexesCornette[cAlphaSecond[0][i][:3]]
+                h2 = hydroIndexesCornette[cAlphaFirst[0][j][:3]]
                 h1 = abs(h1); h2 = abs(h2)
 
                 score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
