@@ -12,7 +12,7 @@ def calculate(pdbFile, cutoff):
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(pdbFile, cwd + "/PDB_Files/" + pdbFile + ".pdb")
     model = struct.get_models()
-    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Cornette/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
+    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Rose/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
 
     models = list(model)
     chains = list(models[0].get_chains())
@@ -117,6 +117,98 @@ def calculate(pdbFile, cutoff):
         "VAL":	4.70
     }
 
+    hydroIndexesEisenberg = {
+        "ALA": 0.62,
+        "ARG": -2.53,
+        "ASN": -0.78,
+        "ASP":	-0.90,
+        "CYS":	0.29,
+        "GLN":	-0.85,
+        "GLU":	-0.74,
+        "GLY":	0.48,
+        "HIS":	-0.40,
+        "ILE":	1.38,
+        "LEU":	1.06,
+        "LYS":	-1.50,
+        "MET":	0.64,
+        "PHE":	1.19,
+        "PRO":	0.12,
+        "SER":	-0.18,
+        "THR":  -0.05,
+        "TRP":	0.81,
+        "TYR":	0.26,
+        "VAL":	1.08
+    }
+
+    hydroIndexesHoppWoods = {
+        "ALA": -0.50,
+        "ARG": 3.00,
+        "ASN": 0.20,
+        "ASP":	3.00,
+        "CYS":	-1.00,
+        "GLN":	0.20,
+        "GLU":	3.00,
+        "GLY":	0.00,
+        "HIS":	-0.50,
+        "ILE":	-1.80,
+        "LEU":	-1.80,
+        "LYS":	3.00,
+        "MET":	-1.30,
+        "PHE":	-2.50,
+        "PRO":	0.00,
+        "SER":	0.30,
+        "THR":  -0.40,
+        "TRP":	-3.40,
+        "TYR":	-2.30,
+        "VAL":	-1.50
+    }
+
+    hydroIndexesJanin = {
+        "ALA": 0.30,
+        "ARG": -1.30,
+        "ASN": -0.50,
+        "ASP":	-0.60,
+        "CYS":	0.90,
+        "GLN":	-0.70,
+        "GLU":	-0.70,
+        "GLY":	0.30,
+        "HIS":	-0.10,
+        "ILE":	0.70,
+        "LEU":	0.50,
+        "LYS":	-1.80,
+        "MET":	0.40,
+        "PHE":	0.50,
+        "PRO":	-0.30,
+        "SER":	-0.10,
+        "THR":  -0.20,
+        "TRP":	0.30,
+        "TYR":	-0.40,
+        "VAL":	0.60
+    }
+
+    hydroIndexesRose = {
+        "ALA": 0.74,
+        "ARG": 0.64,
+        "ASN": 0.63,
+        "ASP": 0.62,
+        "CYS": 0.91,
+        "GLN": 0.62,
+        "GLU": 0.62,
+        "GLY": 0.72,
+        "HIS": 0.78,
+        "ILE": 0.88,
+        "LEU": 0.85,
+        "LYS": 0.52,
+        "MET": 0.85,
+        "PHE": 0.88,
+        "PRO": 0.64,
+        "SER": 0.66,
+        "THR": 0.70,
+        "TRP": 0.85,
+        "TYR": 0.76,
+        "VAL": 0.86
+    }
+
     countTot = 0
     hiScoreMult = 0.0
     hiScoreAdd = 0.0
@@ -153,9 +245,10 @@ def calculate(pdbFile, cutoff):
                     contactTypes[6] += 1
                 
                 # custom hydropathy scoring
-                h1 = hydroIndexesCornette[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexesCornette[cAlphaFirst[0][j][:3]]
-                h1 = abs(h1); h2 = abs(h2)
+                h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
+                h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
+                h1 = abs(h1)
+                h2 = abs(h2)
 
                 score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
                 score = abs(score)
