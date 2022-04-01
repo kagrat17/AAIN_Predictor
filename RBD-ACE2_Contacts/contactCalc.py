@@ -245,30 +245,30 @@ def calculate(pdbFile, cutoff):
                     contactTypes[6] += 1
                 
                 # custom hydropathy scoring
-                h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
-                h1 = abs(h1)
-                h2 = abs(h2)
+                h1 = hydroIndexesKyte[cAlphaSecond[0][i][:3]]
+                h2 = hydroIndexesKyte[cAlphaFirst[0][j][:3]]
+                #h1 = abs(h1)
+                #h2 = abs(h2)
 
                 score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                score = abs(score)
+                #score = abs(score)
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score *= -1
+                    score = -1*abs(score)
+                
+                """
                 elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
                     score *= -1
                 elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
                     score *= -1
+                """
                 hiScoreMult += score
-
+                
+                """"
                 score = (h1+h2)/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                score = abs(score)
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score *= -1
-                elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
-                    score *= -1
-                elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
-                    score *= -1
+                    score = -1*abs(score)
                 hiScoreAdd += score
+                """
 
         contacts = contacts[:len(contacts)-2]
         if count > 0:
@@ -293,8 +293,8 @@ def calculate(pdbFile, cutoff):
     f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
     f.write("Total Contacts: " + str(countTot) + "\n")
     f.write("Cutoff Distance: " + str(cutoff) + " Angstroms" + "\n")
-    f.write("Hydropathy index score (multiplication): " + str(hiScoreMult) + "\n")
-    f.write("Hydropathy index score (addition): " + str(hiScoreAdd) + "\n\n")
+    f.write("Hydropathy index score (multiplication): " + str(hiScoreMult) + "\n\n")
+    #f.write("Hydropathy index score (addition): " + str(hiScoreAdd) + "\n\n")
     f.write(str(len(data[0])) + " Chain " + chains[1].id + " Contact Residues: ")
     for i in range(len(data[0])):
         f.write(str(data[0][i]) + "(" + str(data[1][i]) + ") ")
