@@ -12,7 +12,7 @@ def calculate(pdbFile, cutoff):
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(pdbFile, cwd + "/PDB_Files/" + pdbFile + ".pdb")
     model = struct.get_models()
-    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Rose/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
+    f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Kyte-Doolittle/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
 
     models = list(model)
     chains = list(models[0].get_chains())
