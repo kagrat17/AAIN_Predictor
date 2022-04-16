@@ -557,23 +557,24 @@ def getScore(pdbFile, cutoff, chain1, chain2):
                     contactTypes[6] += 1
                 
                 # custom hydropathy scoring
-                h1 = hydroIndexesHoppWoods[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexesHoppWoods[cAlphaFirst[0][j][:3]]
-                #h1 = abs(h1)
-                #h2 = abs(h2)
+                h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
+                h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
 
-                score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                #score = abs(score)
+
+
+                score = (-abs(h1-h2)/(0.13) + 1)/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
+
+                
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                     score = -1*abs(score)
-                
+                elif positiveFirst and negativeSecond or negativeFirst and positiveSecond:
+                    score = abs(score)
                 """
                 elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
                     score *= -1
                 elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
                     score *= -1
                 """
-
                 hiScoreMult += score
                 
 
