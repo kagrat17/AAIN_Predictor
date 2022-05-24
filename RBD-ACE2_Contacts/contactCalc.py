@@ -360,6 +360,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
     positive = ["LYS", "ARG"]
     negative = ["ASP", "GLU"]
 
+    # maxDiff = 9
     hydroIndexesKyte = {
         "ALA": 1.80,
         "ARG": -4.50,
@@ -382,7 +383,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	-1.30,
         "VAL":	4.20
     }
-
+    # maxDiff = 16
     hydroIndexesEngelman = {
         "ALA": 1.60,
         "ARG": -12.30,
@@ -405,7 +406,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	-0.70,
         "VAL":	2.60
     }
-
+    # maxDiff = 8.8
     hydroIndexesCornette = {
         "ALA": 0.20,
         "ARG": 1.40,
@@ -428,7 +429,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	3.20,
         "VAL":	4.70
     }
-
+    # maxDiff = 3.91
     hydroIndexesEisenberg = {
         "ALA": 0.62,
         "ARG": -2.53,
@@ -451,7 +452,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	0.26,
         "VAL":	1.08
     }
-
+    # maxDiff = 6.4
     hydroIndexesHoppWoods = {
         "ALA": -0.50,
         "ARG": 3.00,
@@ -474,7 +475,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	-2.30,
         "VAL":	-1.50
     }
-
+    # maxDiff = 2.7
     hydroIndexesJanin = {
         "ALA": 0.30,
         "ARG": -1.30,
@@ -497,7 +498,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
         "TYR":	-0.40,
         "VAL":	0.60
     }
-
+    # maxDiff = 0.39
     hydroIndexesRose = {
         "ALA": 0.74,
         "ARG": 0.64,
@@ -523,12 +524,13 @@ def getScore(pdbFile, cutoff, chain1, chain2):
 
     countTot = 0
     hiScoreMult = 0.0
-    hiScoreAdd = 0.0
+    minDist = 5.0
+    maxDist = 12.0
     for i in range(len(cAlphaSecond[0])):
         count = 0
         contacts = ""
         for j in range(len(cAlphaFirst[0])):
-            if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= cutoff:
+            if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= maxDist:
                 count += 1
                 countTot += 1
                 contacts += cAlphaFirst[0][j] + " " + str(int((cAlphaSecond[1][i] - cAlphaFirst[1][j])*1000)/1000) + "\n"
@@ -560,30 +562,14 @@ def getScore(pdbFile, cutoff, chain1, chain2):
                 h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
                 h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
 
+                score = (-abs(h1-h2)/(0.195) + 1.0) * (1-min(1,max(0,(abs((cAlphaSecond[1][i]-cAlphaFirst[1][j])-minDist))/(maxDist-minDist))))
 
-
-                score = (-abs(h1-h2)/(0.13) + 1)/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-
-                
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                     score = -1*abs(score)
                 elif positiveFirst and negativeSecond or negativeFirst and positiveSecond:
                     score = abs(score)
-                """
-                elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
-                    score *= -1
-                elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
-                    score *= -1
-                """
-                hiScoreMult += score
-                
 
-                """
-                score = (h1+h2)/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score = -1*abs(score)
-                hiScoreAdd += score
-                """
+                hiScoreMult += score
 
         contacts = contacts[:len(contacts)-2]
         if count > 0:
