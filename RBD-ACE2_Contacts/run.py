@@ -3,9 +3,9 @@ from contactCalc import *;
 
 def calculateScoreOne():
     cwd = os.getcwd()
-    files = os.listdir(cwd + "/PRODIGYdataset")
+    files = os.listdir(cwd + "/SKEMPI_Dataset")
     for file in files:
-        if file[0] != ".":
+        if file[0] != "." and file[-1] == "d":
             getScore(file[0:4], 10, "A", "B")
 
 def calculateCoronavirus():

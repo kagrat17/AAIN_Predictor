@@ -323,7 +323,7 @@ def calculate(pdbFile, cutoff, chain1, chain2):
 def getScore(pdbFile, cutoff, chain1, chain2):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
-    struct = parser.get_structure(pdbFile, cwd + "/PRODIGYdataset/" + pdbFile + ".pdb")
+    struct = parser.get_structure(pdbFile, cwd + "/RBD-ACE2_Contacts/SKEMPI_Dataset/" + pdbFile + ".pdb")
     model = struct[0]
     #f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Rose/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
     f = open(cwd + "/RBD-ACE2_Contacts/dataSet.txt", mode="a")
