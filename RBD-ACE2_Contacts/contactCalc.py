@@ -323,20 +323,22 @@ def calculate(pdbFile, cutoff, chain1, chain2):
 def getScore(pdbFile, cutoff, chain1, chain2):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
-    struct = parser.get_structure(pdbFile, cwd + "/RBD-ACE2_Contacts/SKEMPI_Dataset/" + pdbFile + ".pdb")
+    struct = parser.get_structure(pdbFile, cwd + "\\SKEMPI_Dataset\\" + pdbFile + ".pdb")
     model = struct[0]
     #f = open(cwd + "/RBD-ACE2_Contacts/" + str(cutoff) + "-Angstroms-Rose/" + pdbFile + "_Contacts_" + str(cutoff) + ".txt", mode="w")
-    f = open(cwd + "/RBD-ACE2_Contacts/dataSet.txt", mode="a")
+    f = open(cwd + "\\dataSet.txt", mode="a")
 
-    residuesFirst = list(model["A"])
-    residuesSecond = list(model["B"])
+    all = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
+
+    residuesFirst = list(list(model)[0])
+    residuesSecond = list(list(model)[1])
     # residue identifier, atom
     cAlphaFirst = [[], []]
     cAlphaSecond = [[], []]
     for i in range(len(residuesFirst)):
         atoms = list(residuesFirst[i].get_atoms())
         for j in range(len(atoms)):
-            if atoms[j].get_id() == "CA":
+            if atoms[j].get_id() == "CA" and atoms[j].get_parent().get_resname() in all:
                 cAlphaFirst[0].append(residuesFirst[i].get_resname() +
                                 str(residuesFirst[i].get_id()[1]))
                 cAlphaFirst[1].append(atoms[j])
@@ -344,7 +346,7 @@ def getScore(pdbFile, cutoff, chain1, chain2):
     for i in range(len(residuesSecond)):
         atoms = list(residuesSecond[i].get_atoms())
         for j in range(len(atoms)):
-            if atoms[j].get_id() == "CA":
+            if atoms[j].get_id() == "CA" and atoms[j].get_parent().get_resname() in all:
                 cAlphaSecond[0].append(residuesSecond[i].get_resname() +
                                 str(residuesSecond[i].get_id()[1]))
                 cAlphaSecond[1].append(atoms[j])
