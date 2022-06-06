@@ -3,11 +3,13 @@ from contactCalc import *;
 
 def calculateScoreOne():
     cwd = os.getcwd()
-    files = os.listdir(cwd + "/SKEMPI_Dataset")
-    for file in files:
-        if file[0] != "." and file[-1] == "b":
-            print(file)
-            getScore(file[0:4], 10, "A", "B")
+    with open('SKEMPI_affinities.txt') as file:
+        lines = file.readlines()
+        for line in lines:
+            line = line.split(",")
+            pdb = line[0].split("_")
+            getScore(pdb[0], pdb[1], pdb[2])
+
 
 def calculateCoronavirus():
     cutoff = float(input("Enter the cutoff distance to calculate for: "))

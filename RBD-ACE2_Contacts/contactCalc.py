@@ -320,7 +320,7 @@ def calculate(pdbFile, cutoff, chain1, chain2):
     f.flush()
     f.close()
 
-def getScore(pdbFile, cutoff, chain1, chain2):
+def getScore(pdbFile, chain1, chain2):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(pdbFile, cwd + "\\SKEMPI_Dataset\\" + pdbFile + ".pdb")
@@ -330,8 +330,13 @@ def getScore(pdbFile, cutoff, chain1, chain2):
 
     all = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
 
-    residuesFirst = list(list(model)[0])
-    residuesSecond = list(list(model)[1])
+    residuesFirst = []
+    residuesSecond = []
+    for i in range(len(chain1)):
+        residuesFirst += list(model[chain1[i]])
+    for i in range(len(chain2)):
+        residuesSecond += list(model[chain2[i]])
+
     # residue identifier, atom
     cAlphaFirst = [[], []]
     cAlphaSecond = [[], []]
@@ -536,40 +541,12 @@ def getScore(pdbFile, cutoff, chain1, chain2):
                 count += 1
                 countTot += 1
                 contacts += cAlphaFirst[0][j] + " " + str(int((cAlphaSecond[1][i] - cAlphaFirst[1][j])*1000)/1000) + "\n"
-                # classifying contacts
-                nonpolarFirst = cAlphaFirst[0][j][:3] in nonpolar
-                nonpolarSecond = cAlphaSecond[0][i][:3] in nonpolar
-                polarFirst = cAlphaFirst[0][j][:3] in polar
-                polarSecond = cAlphaSecond[0][i][:3] in polar
-                positiveFirst = cAlphaFirst[0][j][:3] in positive
-                positiveSecond = cAlphaSecond[0][i][:3] in positive
-                negativeFirst = cAlphaFirst[0][j][:3] in negative
-                negativeSecond = cAlphaSecond[0][i][:3] in negative
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    contactTypes[0] += 1
-                elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
-                    contactTypes[1] += 1
-                elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
-                    contactTypes[2] += 1
-                elif (nonpolarFirst or nonpolarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
-                    contactTypes[3] += 1
-                elif polarFirst and polarSecond:
-                    contactTypes[4] += 1
-                elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
-                    contactTypes[5] += 1
-                elif nonpolarFirst and nonpolarSecond:
-                    contactTypes[6] += 1
-                
+
                 # custom hydropathy scoring
-                h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
+                h1 = hydroIndexesKyte[cAlphaSecond[0][i][:3]]
+                h2 = hydroIndexesKyte[cAlphaFirst[0][j][:3]]
 
-                score = (-abs(h1-h2)/(0.195) + 1.0) * (1-min(1,max(0,(abs((cAlphaSecond[1][i]-cAlphaFirst[1][j])-minDist))/(maxDist-minDist))))
-
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score = -1*abs(score)
-                elif positiveFirst and negativeSecond or negativeFirst and positiveSecond:
-                    score = abs(score)
+                score = (-abs(h1-h2)/(4.5) + 1.0) * (1-min(1,max(0,(abs((cAlphaSecond[1][i]-cAlphaFirst[1][j])-minDist))/(maxDist-minDist))))
 
                 hiScoreMult += score
 
