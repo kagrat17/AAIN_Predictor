@@ -13,7 +13,7 @@ def calculateSKEMPI():
 
 def calculateProdigy():
     cwd = os.getcwd()
-    for file in os.listdir(cwd + "\\PRODIGYdataset"):
+    for file in os.listdir(cwd + "\\PRODIGY_Dataset"):
         if file[0] != ".":
             getScore(file[0:4],"A","B")
 
