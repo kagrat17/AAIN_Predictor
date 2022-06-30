@@ -1,3 +1,5 @@
+# Used for testing purposes or for short-term code (such as to print out results)
+
 import os
 import csv
 

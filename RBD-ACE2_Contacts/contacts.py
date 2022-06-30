@@ -2,6 +2,7 @@ import os
 from tabulate import tabulate
 from Bio.PDB import *
 
+# User-friendly way to get detailed contact info
 def calculateWithInput():
     pdbFile = input("Enter the PDB file to calculate contacts for (exclude file extension): ")
     cutoff = float(input("Enter the cutoff distance for contacts (in Angstroms): "))
@@ -9,6 +10,7 @@ def calculateWithInput():
     chain2 = input("Ligand chain: ")
     calculate(pdbFile, cutoff, chain1, chain2)
 
+# Detailed contact data for a given pdf, cutoff, and chains
 def calculate(pdbFile, cutoff, chain1, chain2):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
@@ -245,32 +247,6 @@ def calculate(pdbFile, cutoff, chain1, chain2):
                     contactTypes[5] += 1
                 elif nonpolarFirst and nonpolarSecond:
                     contactTypes[6] += 1
-                
-                # custom hydropathy scoring
-                h1 = hydroIndexesRose[cAlphaSecond[0][i][:3]]
-                h2 = hydroIndexesRose[cAlphaFirst[0][j][:3]]
-                #h1 = abs(h1)
-                #h2 = abs(h2)
-
-                score = h1*h2/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                #score = abs(score)
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score = -1*abs(score)
-                
-                """
-                elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
-                    score *= -1
-                elif nonpolarFirst and (positiveSecond or negativeSecond) or (positiveFirst or negativeFirst) and nonpolarSecond:
-                    score *= -1
-                """
-                hiScoreMult += score
-                
-                """"
-                score = (h1+h2)/(cAlphaSecond[1][i] - cAlphaFirst[1][j])
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    score = -1*abs(score)
-                hiScoreAdd += score
-                """
 
         contacts = contacts[:len(contacts)-2]
         if count > 0:
@@ -320,6 +296,7 @@ def calculate(pdbFile, cutoff, chain1, chain2):
     f.flush()
     f.close()
 
+# Hydropathy scoring
 def getScore(pdbFile, chain1, chain2):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
@@ -535,7 +512,6 @@ def getScore(pdbFile, chain1, chain2):
     maxDist = 12.0
     for i in range(len(cAlphaSecond[0])):
         count = 0
-        contacts = ""
         for j in range(len(cAlphaFirst[0])):
             if(cAlphaSecond[1][i] - cAlphaFirst[1][j]) <= maxDist:
                 count += 1
@@ -549,26 +525,6 @@ def getScore(pdbFile, chain1, chain2):
                 score = (-abs(h1-h2)/(4.5) + 1.0) * (1-min(1,max(0,(abs((cAlphaSecond[1][i]-cAlphaFirst[1][j])-minDist))/(maxDist-minDist))))
 
                 hiScoreMult += score
-
-        contacts = contacts[:len(contacts)-2]
-        if count > 0:
-            data[0].append(cAlphaSecond[0][i])
-            data[1].append(count)
-            data[2].append(contacts)
-
-    aceRes = dict()
-    for i in range(len(data[2])):
-        res = data[2][i].split("\n")
-        for s in res:
-            if s.split(" ")[0] in aceRes:
-                aceRes[s.split(" ")[0]] += 1
-            else:
-                aceRes[s.split(" ")[0]] = 1
-
-    dataInRows = []
-    for i in range(len(data[0])):
-        arr = [str(data[0][i]) + "(" + str(data[1][i]) + ")", data[2][i]]
-        dataInRows.append(arr)
     
     f.write(str(hiScoreMult) + "\n")
 
