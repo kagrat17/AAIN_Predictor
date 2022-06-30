@@ -1,7 +1,7 @@
 # Retreive data and run algorithms (such as score prediction) on it
 
 import os
-from contactCalc import *;
+from contacts import *;
 
 def calculateSKEMPI():
     with open('SKEMPI_affinities.txt') as file:
