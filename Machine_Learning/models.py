@@ -8,22 +8,23 @@ from sklearn import svm
 cwd = os.getcwd()
 
 # adjust size based on test set that is being used
-x = np.empty((81,7))
+x = np.empty((81,9))
 y = np.empty(81)
 
 # load data into arrays x and y
-with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
+with open(cwd + "\\Machine_Learning\\prodigy_data_2.txt") as data:
     lines = data.readlines()
     count = 0
     for line in lines:
         line = line.split(' ')
-        x[count] = [float(line[0]), float(line[1]), float(line[2]), float(line[3]), float(line[4]), float(line[5]), float(line[6])]
-        y[count] = float(line[7])
+        for i in range(0,9):
+            x[count][i] = float(line[i])
+            y[count] = float(line[9])
         count += 1
 
 
 # repeated cross validation
-model = svm.SVR()
+model = RandomForestRegressor()
 cv = RepeatedKFold(n_splits=4,n_repeats=10)
 scores = cross_val_score(model,x,y,cv=cv)
 # print(scores)
