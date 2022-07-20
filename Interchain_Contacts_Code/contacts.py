@@ -14,17 +14,24 @@ def calculateWithInput():
 def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
-    struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+    # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+    struct = parser.get_structure(pdbFile, cwd + "/PPI_Dataset/pdb" + pdbFile + ".ent")
     model = struct[0]
     f = open(outputFile, 'a')
 
+    # use given chains
+    '''
     residuesFirst = []
     residuesSecond = []
     for i in range(len(chain1)):
         residuesFirst += list(model[chain1[i]])
     for i in range(len(chain2)):
         residuesSecond += list(model[chain2[i]])
-    
+    '''
+    # use first 2 chains
+    residuesFirst = list(list(model)[0])
+    residuesSecond = list(list(model)[1])
+
     # residue identifier, atom
     cAlphaFirst = [[], []]
     cAlphaSecond = [[], []]
@@ -113,6 +120,7 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
     numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5]
 
     f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
 
     """
 
