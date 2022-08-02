@@ -11,7 +11,7 @@ def calculateWithInput():
     calculate(pdbFile, cutoff, chain1, chain2)
 
 # Detailed contact data for a given pdf, cutoff, and chains
-def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
+def calculate(pdbFile, cutoff, split, specificChains, chain1, chain2, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
@@ -20,17 +20,19 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
     f = open(outputFile, 'a')
 
     # use given chains
-    '''
-    residuesFirst = []
-    residuesSecond = []
-    for i in range(len(chain1)):
-        residuesFirst += list(model[chain1[i]])
-    for i in range(len(chain2)):
-        residuesSecond += list(model[chain2[i]])
-    '''
+    if(specificChains):
+        residuesFirst = []
+        residuesSecond = []
+        for i in range(len(chain1)):
+            residuesFirst += list(model[chain1[i]])
+        for i in range(len(chain2)):
+            residuesSecond += list(model[chain2[i]])
     # use first 2 chains
-    residuesFirst = list(list(model)[0])
-    residuesSecond = list(list(model)[1])
+    else:
+        residuesFirst = list(list(model)[0])
+        residuesSecond = list(list(model)[1])
+
+    all = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
 
     # residue identifier, atom
     cAlphaFirst = [[], []]
@@ -38,7 +40,7 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
     for i in range(len(residuesFirst)):
         atoms = list(residuesFirst[i].get_atoms())
         for j in range(len(atoms)):
-            if atoms[j].get_id() == "CA":
+            if atoms[j].get_id() == "CA" and residuesFirst[i].get_resname() in all:
                 cAlphaFirst[0].append(residuesFirst[i].get_resname() +
                                 str(residuesFirst[i].get_id()[1]))
                 cAlphaFirst[1].append(atoms[j])
@@ -46,16 +48,16 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
     for i in range(len(residuesSecond)):
         atoms = list(residuesSecond[i].get_atoms())
         for j in range(len(atoms)):
-            if atoms[j].get_id() == "CA":
+            if atoms[j].get_id() == "CA" and residuesSecond[i].get_resname() in all:
                 cAlphaSecond[0].append(residuesSecond[i].get_resname() +
                                 str(residuesSecond[i].get_id()[1]))
                 cAlphaSecond[1].append(atoms[j])
                 break
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
-    contactTypes = [[0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0]]
+    contactTypes = [[0,0,0,0,0,0,0], [0,0,0,0,0,0,0]]
     # favorable (similar HI), nuetral, unfavorable (large HI difference or same-charges)
-    contactTypesHI = [[0,0,0], [0,0,0], [0,0,0]]
+    contactTypesHI = [[0,0], [0,0]]
 
     nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
     polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
@@ -86,14 +88,17 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
         "VAL":	4.20
     }
 
+    
+
     countTot = 0
     for i in range(len(cAlphaSecond[0])):
         count = 0
         contacts = ""
         for j in range(len(cAlphaFirst[0])):
             distance = cAlphaSecond[1][i] - cAlphaFirst[1][j]
-            if(distance) <= cutoff:
-                HIdiff = hydroIndexesKyte[cAlphaFirst[0][j][:3]]- hydroIndexesKyte[cAlphaSecond[0][i][:3]]
+            if(distance) <= split:
+                HIdiff = abs(hydroIndexesKyte[cAlphaFirst[0][j][:3]]- hydroIndexesKyte[cAlphaSecond[0][i][:3]])
+                HIscaledDiff = 1-(HIdiff)/(4.5)
                 count += 1
                 countTot += 1
                 contacts += cAlphaFirst[0][j] + " " + str(int((distance)*1000)/1000) + "\n"
@@ -107,7 +112,7 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
                 negativeFirst = cAlphaFirst[0][j][:3] in negative
                 negativeSecond = cAlphaSecond[0][i][:3] in negative
 
-                expression = 0 if distance <= 5 else (1 if distance <= 10 else 2)
+                expression = 0 if distance <= split else 1
 
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                     contactTypes[expression][0] += 1
@@ -124,49 +129,24 @@ def calculate(pdbFile, cutoff, chain1, chain2, outputFile):
                 elif nonpolarFirst and nonpolarSecond:
                     contactTypes[expression][6] += 1
                 
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond or HIdiff >= 5:
-                    contactTypesHI[expression][2] += 1
-                elif HIdiff >= 2:
+                if positiveFirst and positiveSecond or negativeFirst and negativeSecond or HIscaledDiff <= 0:
                     contactTypesHI[expression][1] += 1
                 else:
                     contactTypesHI[expression][0] += 1
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
-    # numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
-    # numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5]
+    numFavorable = contactTypes[0][1] + contactTypes[0][2] + contactTypes[0][4] + contactTypes[0][6] + contactTypes[1][1] + contactTypes[1][2] + contactTypes[1][4] + contactTypes[1][6]
+    numUnfavorable = contactTypes[0][0] + contactTypes[0][3] + contactTypes[0][5] + contactTypes[1][0] + contactTypes[1][3] + contactTypes[1][5] 
 
+    f.write(str(contactTypesHI[0][0] + contactTypesHI[0][1]) + " ")
+
+    '''
     for type in contactTypesHI:
         for num in type:
             f.write(str(num) + " ") 
+    '''
+
     # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
-
-    """
-
-    f.write(pdbFile + ": " + struct.header["name"] + "\n\n")
-    f.write("Total Contacts: " + str(countTot) + "\n")
-    f.write("Cutoff Distance: " + str(cutoff) + " Angstroms" + "\n")
-    #f.write("Hydropathy index score (addition): " + str(hiScoreAdd) + "\n\n")
-    f.write(str(len(data[0])) + " Chain " + chain1 + " Contact Residues: ")
-    for i in range(len(data[0])):
-        f.write(str(data[0][i]) + "(" + str(data[1][i]) + ") ")
-    f.write("\n")
-    f.write(str(len(aceRes)) + " Chain " + chain1 + " Contact Residues: ")
-    for c in aceRes:
-        f.write(str(c.split(" ")[0]) + "(" + str(aceRes[c]) + ") ")
-    f.write("\n\n")
-    f.write(tabulate((dataInRows), headers=["Chain " + chain1, "Chain " + chain2]))
-    f.write("\n\n")
-
-    f.write("Contact Types\n")
-    f.write("Same charge: " + str(contactTypes[0]) + "\n")
-    f.write("Opposite charge: " + str(contactTypes[1]) + "\n")
-    f.write("Charged-polar: " + str(contactTypes[2]) + "\n")
-    f.write("Charged-nonpolar: " + str(contactTypes[3]) + "\n")
-    f.write("Polar-polar: " + str(contactTypes[4]) + "\n")
-    f.write("Polar-nonpolar: " + str(contactTypes[5]) + "\n")
-    f.write("Nonpolar-nonpolar: " + str(contactTypes[6]) + "\n")
-
-    """
 
     f.flush()
     f.close()

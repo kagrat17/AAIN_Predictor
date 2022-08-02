@@ -3,6 +3,7 @@
 import os
 import csv
 from contacts import *;
+from models import *;
 
 # print input parameters and experimental affinity to data file from the PRODIGY dataset for machine learning
 def getProdigyData():
@@ -13,7 +14,7 @@ def getProdigyData():
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                calculate(row[0][0:4],15,"A","B",cwd + "\\Machine_Learning\\prodigy_data_2.txt")
+                calculate(row[0][0:4],10,5,True,"A","B",cwd + "\\Machine_Learning\\prodigy_data_2.txt")
                 f.write(str(row[3]) + "\n")
                 f.flush()
             line_count += 1
@@ -28,10 +29,44 @@ def getPPIData():
         line_count = 0
         for row in csv_reader:
             if line_count != 0 and os.path.isfile(cwd + "/PPI_Dataset/pdb" + row[0] + ".ent"):
-                calculate(row[0],10,"A","B",cwd + "\\Machine_Learning\\ppi_data.txt")
+                calculate(row[0],10,False,"A","B",cwd + "\\Machine_Learning\\ppi_data.txt")
                 f.write(str(row[1]) + "\n")
                 f.flush()
             line_count += 1
     f.close()
 
-getProdigyData()
+# print input parameters and experimental affinity to data file from the SKEMPI dataset for machine learning
+def getSKEMPIData():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
+    with open(cwd + "\\SKEMPI_Dataset\\skempi.csv") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        pdbs = set()
+        for row in csv_reader:
+            if line_count != 0 and row[0][0:4] not in pdbs:
+                pdbs.add(row[0][0:4])
+                calculate(row[0][0:4],10,True,row[0].split("_")[1],row[0].split("_")[2],cwd + "\\Machine_Learning\\skempi_data.txt")
+                f.write(str(row[8]) + "\n")
+                f.flush()
+            line_count += 1
+    f.close()
+
+def loopProdigyDistance():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data_2.txt", 'a')
+    with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+        for dist in range(1,30):
+            f.truncate(0)
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0:
+                    calculate(row[0][0:4],10,dist,True,"A","B",cwd + "\\Machine_Learning\\prodigy_data_2.txt")
+                    f.write(str(row[3]) + "\n")
+                    f.flush()
+                line_count += 1
+            run()
+    f.close()
+
+loopProdigyDistance()
