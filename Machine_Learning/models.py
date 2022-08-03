@@ -6,13 +6,20 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score, RepeatedKFold, KFold
 from sklearn import svm
 from scipy.stats import pearsonr
+from sklearn.preprocessing import MinMaxScaler
 import math
 
 def run():
 
+    cwd = os.getcwd()
+
     # adjust size based on test set that is being used
     x = np.empty((81,1))
     y = np.empty(81)
+
+    scaler = MinMaxScaler()
+    x = scaler.fit_transform(x)
+    print(x)
 
     # load data into arrays x and y
     with open(cwd + "\\Machine_Learning\\prodigy_data_2.txt") as data:
@@ -63,7 +70,7 @@ def run():
 
     f.write("Average value of each parameter: " + str(np.mean(x,axis=0)) + "\n")
     f.write("R^2 on entire dataset: " + str(model.score(x,y)) + "\n")
-    f.write(model.coef_)
+    f.write(np.array2string(model.coef_))
     f.write("\n\n")
 
     # print()

@@ -1,8 +1,12 @@
 # Retreive data and run algorithms (such as score prediction) on it
 
 import os
+import sys
 import csv
 from contacts import *;
+
+sys.path.append(os.getcwd() + "\\Machine_Learning")
+
 from models import *;
 
 # print input parameters and experimental affinity to data file from the PRODIGY dataset for machine learning
@@ -55,8 +59,11 @@ def getSKEMPIData():
 def loopProdigyDistance():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data_2.txt", 'a')
-    with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
-        for dist in range(1,30):
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    for dist in range(1,30):
+        o.write(str(dist) + "\n")
+        o.flush()
+        with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
             f.truncate(0)
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
@@ -68,5 +75,6 @@ def loopProdigyDistance():
                 line_count += 1
             run()
     f.close()
+    o.close()
 
 loopProdigyDistance()
