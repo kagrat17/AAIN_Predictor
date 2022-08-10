@@ -7,6 +7,7 @@ from sklearn.model_selection import cross_val_score, RepeatedKFold, KFold
 from sklearn import svm
 from scipy.stats import pearsonr
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import math
 
 def run():
@@ -14,28 +15,27 @@ def run():
     cwd = os.getcwd()
 
     # adjust size based on test set that is being used
-    x = np.empty((81,1))
-    y = np.empty(81)
-
-    scaler = MinMaxScaler()
-    x = scaler.fit_transform(x)
-    print(x)
+    x = np.empty((46,1))
+    y = np.empty(46)
+    
 
     # load data into arrays x and y
-    with open(cwd + "\\Machine_Learning\\prodigy_data_2.txt") as data:
+    with open(cwd + "\\Machine_Learning\\test2.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
             line = line.split(' ')
-            # for i in range(0,1):
-            x[count][0] = int(line[0])
-            y[count] = float(line[1])
-            # y[count] = math.log(float(line[1]))*8.3145*298
+            for i in range(0,1):
+                x[count][i] = int(line[i])
+                y[count] = float(line[1])
             count += 1
 
+    scaler = MinMaxScaler()
+    # scaler = StandardScaler()
+    x = scaler.fit_transform(x)
+    # print(x)
+
     model = LinearRegression()
-    actual = []
-    predicted = []
 
     '''
     # repeated cross validation
@@ -68,10 +68,10 @@ def run():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-    f.write("Average value of each parameter: " + str(np.mean(x,axis=0)) + "\n")
-    f.write("R^2 on entire dataset: " + str(model.score(x,y)) + "\n")
-    f.write(np.array2string(model.coef_))
-    f.write("\n\n")
+    f.write(str(model.score(x,y)) + "\t")
+    f.write(str(model.coef_[0]) + "\t")
+    # f.write(str(np.mean(x,axis=0)[0]) + "\t")
+    f.write("\n")
 
     # print()
     # for i in range(0,81):
@@ -93,3 +93,5 @@ def run():
     print(rfr.score(x,y))
     print(regr.score(x,y))
     '''
+
+run()
