@@ -2,15 +2,15 @@
 
 import os
 import sys
-import csv
-import math
-from contacts import *;
 
 sys.path.append(os.getcwd() + "\\Machine_Learning")
 
-from models import *;
+import csv
+import math
+from contacts import *
+from models import *
 
-# print input parameters and experimental affinity to data file from the PRODIGY dataset for machine learning
+
 def getProdigyData():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data_2.txt", 'a')
@@ -19,13 +19,16 @@ def getProdigyData():
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                calculate(row[0][0:4],10,5,True,"A","B",cwd + "\\Machine_Learning\\prodigy_data_2.txt")
+                calculateCA(row[0][0:4], 10, 5, True, "A", "B",
+                            cwd + "\\Machine_Learning\\prodigy_data_2.txt")
                 f.write(str(row[3]) + "\n")
                 f.flush()
             line_count += 1
     f.close()
 
 # print input parameters and experimental affinity to data file from the PPI Affinity dataset for machine learning
+
+
 def getPPIData():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\ppi_data.txt", 'a')
@@ -34,13 +37,16 @@ def getPPIData():
         line_count = 0
         for row in csv_reader:
             if line_count != 0 and os.path.isfile(cwd + "/PPI_Dataset/pdb" + row[0] + ".ent"):
-                calculate(row[0],10,False,"A","B",cwd + "\\Machine_Learning\\ppi_data.txt")
+                calculate(row[0], 10, False, "A", "B", cwd +
+                          "\\Machine_Learning\\ppi_data.txt")
                 f.write(str(row[1]) + "\n")
                 f.flush()
             line_count += 1
     f.close()
 
 # print input parameters and experimental affinity to data file from the SKEMPI dataset for machine learning
+
+
 def getSKEMPIData():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
@@ -51,17 +57,19 @@ def getSKEMPIData():
         for row in csv_reader:
             if line_count != 0 and row[0][0:4] not in pdbs:
                 pdbs.add(row[0][0:4])
-                calculate(row[0][0:4],10,True,row[0].split("_")[1],row[0].split("_")[2],cwd + "\\Machine_Learning\\skempi_data.txt")
+                calculate(row[0][0:4], 10, True, row[0].split("_")[1], row[0].split(
+                    "_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
                 f.write(str(row[8]) + "\n")
                 f.flush()
             line_count += 1
     f.close()
 
+
 def loopProdigy():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data_2.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(1,30):
+    for dist in range(1, 30):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -70,19 +78,21 @@ def loopProdigy():
             line_count = 0
             for row in csv_reader:
                 if line_count != 0:
-                    calculate(row[0][0:4],0,dist,True,"A","B",cwd + "\\Machine_Learning\\prodigy_data_2.txt")
+                    calculate(row[0][0:4], 0, dist, True, "A", "B",
+                              cwd + "\\Machine_Learning\\prodigy_data_2.txt")
                     f.write(str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            run()
+            train()
     f.close()
     o.close()
+
 
 def loopSKEMPI():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(1,30):
+    for dist in range(1, 30):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\SKEMPI_Dataset\\skempi.csv") as csv_file:
@@ -94,7 +104,8 @@ def loopSKEMPI():
                 try:
                     if line_count != 0 and row[0][0:4] not in pdbs and float(row[8]) and row[0][0:4] != "1KBH":
                         pdbs.add(row[0][0:4])
-                        calculate(row[0][0:4],0,dist,True,row[0].split("_")[1],row[0].split("_")[2],cwd + "\\Machine_Learning\\skempi_data.txt")
+                        calculate(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split(
+                            "_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
                         f.write(row[8])
                         # f.write(str(math.log(row[8])*) + "\n")
                         f.flush()
@@ -102,15 +113,16 @@ def loopSKEMPI():
                     continue
                 line_count += 1
 
-        run()
+        train()
     f.close()
     o.close()
+
 
 def loopPPI():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\ppi_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(1,30):
+    for dist in range(1, 30):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PPI_Dataset\\set_4.csv") as csv_file:
@@ -119,20 +131,186 @@ def loopPPI():
             line_count = 0
             for row in csv_reader:
                 if line_count != 0 and os.path.isfile(cwd + "/PPI_Dataset/pdb" + row[0] + ".ent"):
-                    calculate(row[0],0,dist,False,"A","B",cwd + "\\Machine_Learning\\ppi_data.txt")
+                    calculate(row[0], 0, dist, False, "A", "B",
+                              cwd + "\\Machine_Learning\\ppi_data.txt")
                     f.write(str(row[1]) + "\n")
                     f.flush()
                 line_count += 1
-        run()
+        train()
     f.close()
     o.close()
 
 
+def loopProdigyContacts():
+    cwd = os.getcwd()
+    with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count != 0:
+                calculateHeavy(row[0][0:4], 0, 20, True, "A", "B", cwd +
+                               "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+            line_count += 1
 
 
+def totContactsProdigy():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    for dist in range(20, 0, -1):
+        o.write(str(dist) + "\t")
+        o.flush()
+        with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+            f.truncate(0)
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0:
+                    c = open(
+                        cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+                    dists = c.readlines()
+                    count = 0
+                    for distance in dists:
+                        distance = distance.split(' ')
+                        if float(distance[0]) <= dist:
+                            count += 1
+                    f.write(str(count) + " " + str(row[3]) + "\n")
+                    f.flush()
+                line_count += 1
+            train()
+    f.close()
+    o.close()
 
 
+def heavy_and_ca():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    for dist in range(5, 6, 1):
+        o.write(str(dist) + "\t")
+        o.flush()
+        with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+            f.truncate(0)
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0:
+                    c = open(
+                        cwd + "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
+                    dists = c.readlines()
+                    count = 0
+                    for distance in dists:
+                        distance = distance.split(' ')
+                        if float(distance[0]) <= dist:
+                            count += 1
+                    f.write(str(count) + " ")
+                    f.flush()
+                    calculateCA(row[0][0:4], 0, dist, True, "A", "B",
+                                cwd + "\\Machine_Learning\\prodigy_data.txt")
+                    f.write(str(row[3]) + "\n")
+                    f.flush()
+                line_count += 1
+            train()
+    f.close()
+    o.close()
 
+
+def heavy_res():
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
+    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
+    positive = ["LYS", "ARG"]
+    negative = ["ASP", "GLU"]
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    for dist in range(20, 0, -1):
+        o.write(str(dist) + "\t")
+        o.flush()
+        with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+            f.truncate(0)
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0:
+                    c = open(
+                        cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+                    dists = c.readlines()
+                    contactTypes = [0, 0, 0, 0, 0, 0, 0]
+                    for distance in dists:
+                        distance = distance.split(' ')
+                        if float(distance[0]) <= dist:
+                            nonpolarFirst = distance[3][:3] in nonpolar
+                            nonpolarSecond = distance[4][:3] in nonpolar
+                            polarFirst = distance[3][:3] in polar
+                            polarSecond = distance[4][:3] in polar
+                            positiveFirst = distance[3][:3] in positive
+                            positiveSecond = distance[4][:3] in positive
+                            negativeFirst = distance[3][:3] in negative
+                            negativeSecond = distance[4][:3] in negative
+
+                            if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
+                                contactTypes[0] += 1
+                            elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                                contactTypes[1] += 1
+                            elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                                contactTypes[2] += 1
+                            elif (nonpolarFirst or nonpolarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                                contactTypes[3] += 1
+                            elif polarFirst and polarSecond:
+                                contactTypes[4] += 1
+                            elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
+                                contactTypes[5] += 1
+                            elif nonpolarFirst and nonpolarSecond:
+                                contactTypes[6] += 1
+
+                    f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(
+                        contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(row[3]) + "\n")
+                    f.flush()
+                line_count += 1
+            train()
+    f.close()
+    o.close()
+
+
+def ca_res():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    for dist in range(20, 0, -1):
+        o.write(str(dist) + "\t")
+        o.flush()
+        with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+            f.truncate(0)
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0:
+                    calculateCA(row[0][0:4], 0, dist, True, "A", "B",
+                                cwd + "\\Machine_Learning\\prodigy_data.txt")
+                    f.write(str(row[3]) + "\n")
+                    f.flush()
+                line_count += 1
+            train()
+    f.close()
+    o.close()
+
+
+def prodigy_LR():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+        f.truncate(0)
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count != 0:
+                f.write(row[8] + " " + row[9] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[13] + " " + row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                f.flush()
+            line_count += 1
+        train()
+    f.close()
+
+prodigy_LR()
 
 '''
 
@@ -161,8 +339,6 @@ with open(cwd + "\\SKEMPI_Dataset\\skempi.csv") as csv_file:
         line_count += 1
 f.close()
 
-'''
-
 cwd = os.getcwd()
 listSkempi = os.listdir(cwd + "\\SKEMPI_Dataset")
 listSkempi = [file[0:4] for file in listSkempi]
@@ -183,3 +359,4 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         line_count += 1
 f.close()
 
+'''

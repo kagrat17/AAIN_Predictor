@@ -10,24 +10,24 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 import math
 
-def run():
+def train():
 
     cwd = os.getcwd()
 
     # adjust size based on test set that is being used
-    x = np.empty((46,1))
-    y = np.empty(46)
+    x = np.empty((81,9))
+    y = np.empty(81)
     
 
     # load data into arrays x and y
-    with open(cwd + "\\Machine_Learning\\test2.txt") as data:
+    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
             line = line.split(' ')
-            for i in range(0,1):
-                x[count][i] = int(line[i])
-                y[count] = float(line[1])
+            for i in range(0,9):
+                x[count][i] = float(line[i])
+            y[count] = float(line[9])
             count += 1
 
     scaler = MinMaxScaler()
@@ -68,10 +68,13 @@ def run():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-    f.write(str(model.score(x,y)) + "\t")
-    f.write(str(model.coef_[0]) + "\t")
-    # f.write(str(np.mean(x,axis=0)[0]) + "\t")
-    f.write("\n")
+    f.write(str(model.coef_))
+    f.write(str(model.score(x,y)))
+
+    '''
+    for i in range(0,81):
+        f.write(str(pred[i]) + " " + str(y[i]) + "\n")
+    '''
 
     # print()
     # for i in range(0,81):
@@ -93,5 +96,3 @@ def run():
     print(rfr.score(x,y))
     print(regr.score(x,y))
     '''
-
-run()
