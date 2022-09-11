@@ -149,7 +149,7 @@ def loopProdigyContacts():
         for row in csv_reader:
             if line_count != 0:
                 calculateHeavy(row[0][0:4], 0, 20, True, "A", "B", cwd +
-                               "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+                               "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
             line_count += 1
 
 
@@ -215,11 +215,35 @@ def heavy_and_ca():
     o.close()
 
 
-def heavy_res():
+def heavy():
     nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
     polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
     positive = ["LYS", "ARG"]
     negative = ["ASP", "GLU"]
+
+    hydroIndexesKyte = {
+        "ALA": 1.80,
+        "ARG": -4.50,
+        "ASN": -3.50,
+        "ASP": -3.50,
+        "CYS":	2.50,
+        "GLN": -3.50,
+        "GLU": -3.50,
+        "GLY": -0.40,
+        "HIS": -3.20,
+        "ILE":	4.50,
+        "LEU":	3.80,
+        "LYS": -3.90,
+        "MET":	1.90,
+        "PHE":	2.80,
+        "PRO":	1.60,
+        "SER": -0.80,
+        "THR": -0.70,
+        "TRP": -0.90,
+        "TYR": -1.30,
+        "VAL":	4.20
+    }
+
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
@@ -232,6 +256,8 @@ def heavy_res():
             line_count = 0
             for row in csv_reader:
                 if line_count != 0:
+                    HIpositive = 0
+                    HInegative = 0
                     c = open(
                         cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
                     dists = c.readlines()
@@ -239,6 +265,15 @@ def heavy_res():
                     for distance in dists:
                         distance = distance.split(' ')
                         if float(distance[0]) <= dist:
+
+                            HIdiff = abs(hydroIndexesKyte[distance[3][:3]]- hydroIndexesKyte[distance[4][:3]])
+                            HIscaledDiff = 1-(HIdiff)/(4.5)
+
+                            if HIscaledDiff > 0:
+                                HIpositive += 1
+                            else:
+                                HInegative += 1
+
                             nonpolarFirst = distance[3][:3] in nonpolar
                             nonpolarSecond = distance[4][:3] in nonpolar
                             polarFirst = distance[3][:3] in polar
@@ -263,8 +298,10 @@ def heavy_res():
                             elif nonpolarFirst and nonpolarSecond:
                                 contactTypes[6] += 1
 
-                    f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(
-                        contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(row[3]) + "\n")
+                    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
+                    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
+
+                    f.write(str(HIpositive + HInegative) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
             train()
@@ -304,7 +341,7 @@ def prodigy_LR():
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                f.write(row[8] + " " + row[9] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[13] + " " + row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                f.write(row[8] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[14] + " " + row[15] + " " + row[3] + "\n")
                 f.flush()
             line_count += 1
         train()

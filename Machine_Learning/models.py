@@ -2,9 +2,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import cross_val_score, RepeatedKFold, KFold
-from sklearn import svm
 from scipy.stats import pearsonr
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
@@ -15,7 +12,7 @@ def train():
     cwd = os.getcwd()
 
     # adjust size based on test set that is being used
-    x = np.empty((81,9))
+    x = np.empty((81,6))
     y = np.empty(81)
     
 
@@ -25,14 +22,13 @@ def train():
         count = 0
         for line in lines:
             line = line.split(' ')
-            for i in range(0,9):
+            for i in range(0,6):
                 x[count][i] = float(line[i])
-            y[count] = float(line[9])
+            y[count] = float(line[6])
             count += 1
 
-    scaler = MinMaxScaler()
-    # scaler = StandardScaler()
-    x = scaler.fit_transform(x)
+    # scaler = MinMaxScaler()
+    # x = scaler.fit_transform(x)
     # print(x)
 
     model = LinearRegression()
@@ -68,8 +64,9 @@ def train():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-    f.write(str(model.coef_))
-    f.write(str(model.score(x,y)))
+    f.write(str(model.score(x,y)) + "\t" + str(model.coef_) + "\t" + str(model.intercept_) + "\n")
+    # f.write(str(model.coef_[0]) + " " + str(model.coef_[1]) + "\n")
+    
 
     '''
     for i in range(0,81):
@@ -84,15 +81,3 @@ def train():
     # plt.plot(np.array(pred), np.array(y), 'o')
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
-
-
-
-    '''
-    lr = LinearRegression().fit(x,y)
-    rfr = RandomForestRegressor().fit(x,y)
-    regr = svm.SVR().fit(x,y)
-
-    print(lr.score(x,y))
-    print(rfr.score(x,y))
-    print(regr.score(x,y))
-    '''

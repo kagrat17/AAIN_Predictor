@@ -125,17 +125,16 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
                 f.write(str(minDist) + " " + atomsFirst[1][j][l].name + " " + atomsSecond[1]
                         [i][k].name + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
                 f.flush()
-                '''
+                
                 # classifying contacts
-                nonpolarFirst = cAlphaFirst[0][j][:3] in nonpolar
-                nonpolarSecond = cAlphaSecond[0][i][:3] in nonpolar
-                polarFirst = cAlphaFirst[0][j][:3] in polar
-                polarSecond = cAlphaSecond[0][i][:3] in polar
-                positiveFirst = cAlphaFirst[0][j][:3] in positive
-                positiveSecond = cAlphaSecond[0][i][:3] in positive
-                negativeFirst = cAlphaFirst[0][j][:3] in negative
-                negativeSecond = cAlphaSecond[0][i][:3] in negative
-
+                nonpolarFirst = atomsFirst[0][j][:3] in nonpolar
+                nonpolarSecond = atomsSecond[0][i][:3] in nonpolar
+                polarFirst = atomsFirst[0][j][:3] in polar
+                polarSecond = atomsSecond[0][i][:3] in polar
+                positiveFirst = atomsFirst[0][j][:3] in positive
+                positiveSecond = atomsSecond[0][i][:3] in positive
+                negativeFirst = atomsFirst[0][j][:3] in negative
+                negativeSecond = atomsSecond[0][i][:3] in negative
 
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                     contactTypes[0] += 1
@@ -150,21 +149,11 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
                 elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
                     contactTypes[5] += 1
                 elif nonpolarFirst and nonpolarSecond:
-                    contactTypes[6] += 1
-
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    contactTypesHI[1] += 1
-                elif positiveFirst and negativeSecond or negativeFirst and positiveSecond:
-                    contactTypesHI[0] += 1
-                elif HIscaledDiff <= hisplit:
-                    contactTypesHI[1] += 1
-                else:
-                    contactTypesHI[0] += 1
-                '''
+                    contactTypes[6] += 1         
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
-    # numFavorable = contactTypes[0][1] + contactTypes[0][2] + contactTypes[0][4] + contactTypes[0][6] + contactTypes[1][1] + contactTypes[1][2] + contactTypes[1][4] + contactTypes[1][6]
-    # numUnfavorable = contactTypes[0][0] + contactTypes[0][3] + contactTypes[0][5] + contactTypes[1][0] + contactTypes[1][3] + contactTypes[1][5]
+    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
+    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
 
     '''
     for type in contactTypesHI:
@@ -172,7 +161,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
             f.write(str(num) + " ")
     '''
 
-    # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
     f.close()
 
 
@@ -263,7 +252,7 @@ def calculateCA(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, output
             distance = atomsSecond[1][i] - atomsFirst[1][j]
             if (distance) <= cutoff:
                 countTot += 1
-                '''
+                
                 # classifying contacts
                 nonpolarFirst = atomsFirst[0][j][:3] in nonpolar
                 nonpolarSecond = atomsSecond[0][i][:3] in nonpolar
@@ -288,11 +277,11 @@ def calculateCA(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, output
                     contactTypes[5] += 1
                 elif nonpolarFirst and nonpolarSecond:
                     contactTypes[6] += 1
-                '''
+
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
-    # numFavorable = contactTypes[0][1] + contactTypes[0][2] + contactTypes[0][4] + contactTypes[0][6] + contactTypes[1][1] + contactTypes[1][2] + contactTypes[1][4] + contactTypes[1][6]
-    # numUnfavorable = contactTypes[0][0] + contactTypes[0][3] + contactTypes[0][5] + contactTypes[1][0] + contactTypes[1][3] + contactTypes[1][5]
+    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
+    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
 
     '''
     for type in contactTypesHI:
@@ -301,5 +290,5 @@ def calculateCA(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, output
     '''
 
     # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
-    f.write(str(countTot) + " ")
+    f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
     f.close()
