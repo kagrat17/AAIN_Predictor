@@ -244,10 +244,13 @@ def heavy():
         "VAL":	4.20
     }
 
+    polarAtoms = ["O", "N", "S"]
+    nonpolarAtoms = ["C"]
+
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(20, 0, -1):
+    for dist in range(11, 0, -1):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -259,13 +262,14 @@ def heavy():
                     HIpositive = 0
                     HInegative = 0
                     c = open(
-                        cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+                        cwd + "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
                     dists = c.readlines()
                     contactTypes = [0, 0, 0, 0, 0, 0, 0]
+                    contactTypesAtoms = [0, 0, 0]
                     for distance in dists:
                         distance = distance.split(' ')
-                        if float(distance[0]) <= dist:
-
+                        if float(distance[0]) <= dist and distance[1][0] != "H" and distance[2][0] != "H":
+                            '''
                             HIdiff = abs(hydroIndexesKyte[distance[3][:3]]- hydroIndexesKyte[distance[4][:3]])
                             HIscaledDiff = 1-(HIdiff)/(4.5)
 
@@ -297,11 +301,27 @@ def heavy():
                                 contactTypes[5] += 1
                             elif nonpolarFirst and nonpolarSecond:
                                 contactTypes[6] += 1
+                            '''
+                            
+                            nonpolarFirst = distance[1][0] in nonpolarAtoms
+                            nonpolarSecond = distance[2][0] in nonpolarAtoms
+                            polarFirst = distance[1][0] in polarAtoms
+                            polarSecond = distance[2][0] in polarAtoms
 
-                    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
-                    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
+                            if nonpolarFirst and nonpolarSecond:
+                                contactTypesAtoms[0] += 1
+                            elif nonpolarFirst and polarSecond or polarFirst and nonpolarSecond:
+                                contactTypesAtoms[1] += 1
+                            elif polarFirst and polarSecond:
+                                contactTypesAtoms[2] += 1
+                            else:
+                                print(str(distance[1]) + " " + str(distance[2]))
 
-                    f.write(str(HIpositive + HInegative) + " " + str(row[3]) + "\n")
+
+                    # numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
+                    # numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
+
+                    f.write(str(contactTypesAtoms[0]) + " " + str(contactTypesAtoms[1]) + " " + str(contactTypesAtoms[2]) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
             train()
@@ -347,7 +367,7 @@ def prodigy_LR():
         train()
     f.close()
 
-prodigy_LR()
+heavy()
 
 '''
 

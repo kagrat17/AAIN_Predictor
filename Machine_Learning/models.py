@@ -12,7 +12,7 @@ def train():
     cwd = os.getcwd()
 
     # adjust size based on test set that is being used
-    x = np.empty((81,6))
+    x = np.empty((81,3))
     y = np.empty(81)
     
 
@@ -22,13 +22,13 @@ def train():
         count = 0
         for line in lines:
             line = line.split(' ')
-            for i in range(0,6):
+            for i in range(0,3):
                 x[count][i] = float(line[i])
-            y[count] = float(line[6])
+            y[count] = float(line[3])
             count += 1
 
-    # scaler = MinMaxScaler()
-    # x = scaler.fit_transform(x)
+    scaler = MinMaxScaler()
+    x = scaler.fit_transform(x)
     # print(x)
 
     model = LinearRegression()
@@ -64,7 +64,7 @@ def train():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-    f.write(str(model.score(x,y)) + "\t" + str(model.coef_) + "\t" + str(model.intercept_) + "\n")
+    f.write(str(model.score(x,y)) + "\t" + str(model.coef_[0]) + "\t" + str(model.coef_[1]) + "\t" + str(model.coef_[2]) + "\n")
     # f.write(str(model.coef_[0]) + " " + str(model.coef_[1]) + "\n")
     
 
