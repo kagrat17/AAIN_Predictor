@@ -355,19 +355,30 @@ def ca_res():
 def prodigy_LR():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    totals = [0,0,0,0,0,0,0,0,0]
     with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         f.truncate(0)
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                f.write(row[8] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[14] + " " + row[15] + " " + row[3] + "\n")
+                totals[0] += float(row[8])
+                totals[1] += float(row[9])
+                totals[2] += float(row[10])
+                totals[3] += float(row[11])
+                totals[4] += float(row[12])
+                totals[5] += float(row[13])
+                totals[6] += float(row[14])
+                totals[7] += float(row[15])
+                totals[8] += float(row[16])
+
+                f.write(row[8] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
                 f.flush()
             line_count += 1
         train()
     f.close()
 
-heavy()
+prodigy_LR()
 
 '''
 
