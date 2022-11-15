@@ -5,14 +5,17 @@ from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+import statsmodels.api as sm
+import pandas as pd
 import math
 
-def train():
+
+def train(n):
 
     cwd = os.getcwd()
 
     # adjust size based on test set that is being used
-    x = np.empty((81,6))
+    x = np.empty((81,n))
     y = np.empty(81)
     
 
@@ -22,9 +25,9 @@ def train():
         count = 0
         for line in lines:
             line = line.split(' ')
-            for i in range(0,6):
+            for i in range(0,n):
                 x[count][i] = float(line[i])
-            y[count] = float(line[6])
+            y[count] = float(line[n])
             count += 1
 
     scaler = MinMaxScaler()
@@ -55,8 +58,11 @@ def train():
 
     print()'''
 
-    model.fit(x,y)
-    pred = list(model.predict(x))
+    
+
+    # model.fit(x,y)
+    # print(model.coef_)
+    # pred = list(model.predict(x))
     # print("Pearson correlation coefficient (r) and p-value on whole dataset: " + str(pearsonr(pred, list(y))))
     # print("R^2 on entire dataset: " + str(model.score(x,y)))
     # print(model.coef_)
@@ -64,9 +70,19 @@ def train():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-    f.write(str(model.score(x,y)) + "\n")
+    # f.write(str(model.score(x,y)) + "\n")
 
-    print(str(pearsonr(pred, y)))
+    x = sm.add_constant(x)
+
+    model2 = sm.OLS(y,x)
+    results = model2.fit()
+    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\t")
+
+    ypred = results.predict(x)
+    f.write(str(pearsonr(y,ypred)) + "\t")
+
+
+    # print(str(pearsonr(pred, y)))
     # f.write(str(model.coef_[0]) + " " + str(model.coef_[1]) + "\n")
     
 

@@ -9,6 +9,15 @@ import csv
 import math
 from contacts import *
 from models import *
+from Bio.PDB import *
+
+'''
+cwd = os.getcwd()
+parser = PDBParser(PERMISSIVE=True, QUIET=True)
+# struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+struct = parser.get_structure("1an1", cwd + "\\PPI_Dataset\\pdb" + "1an1" + ".ent")
+print(str(list(struct)))
+'''
 
 
 def getProdigyData():
@@ -64,6 +73,21 @@ def getSKEMPIData():
             line_count += 1
     f.close()
 
+def getPDBData():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\prodigy_data_2.txt", 'a')
+    with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count != 0:
+                calculateCA(row[0][0:4], 10, 5, True, "A", "B",
+                            cwd + "\\Machine_Learning\\prodigy_data_2.txt")
+                f.write(str(row[3]) + "\n")
+                f.flush()
+            line_count += 1
+    f.close()
+
 
 def loopProdigy():
     cwd = os.getcwd()
@@ -104,7 +128,7 @@ def loopSKEMPI():
                 try:
                     if line_count != 0 and row[0][0:4] not in pdbs and float(row[8]) and row[0][0:4] != "1KBH":
                         pdbs.add(row[0][0:4])
-                        calculate(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split(
+                        calculateSKEMPI(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split(
                             "_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
                         f.write(row[8])
                         # f.write(str(math.log(row[8])*) + "\n")
@@ -250,7 +274,7 @@ def heavy():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(11, 0, -1):
+    for dist in range(5,6):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -321,10 +345,10 @@ def heavy():
                     # numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
                     # numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
 
-                    f.write(str(contactTypesAtoms[0]) + " " + str(contactTypesAtoms[1]) + " " + str(contactTypesAtoms[2]) + " " + str(row[3]) + "\n")
+                    f.write(str(contactTypesAtoms[0] + contactTypesAtoms[1] + contactTypesAtoms[2]) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
+            train(1)
     f.close()
     o.close()
 
@@ -333,7 +357,7 @@ def ca_res():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(20, 0, -1):
+    for dist in range(9,10):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -347,38 +371,78 @@ def ca_res():
                     f.write(str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
+            train(7)
     f.close()
     o.close()
 
+final = []
 
-def prodigy_LR():
+def decimalToBinary(n):   # converting decimal to binary
+    b = 0
+    i = 1
+    while (n != 0):
+        r = n % 2
+        b+= r * i
+        n//= 2
+        i = i * 10
+    return b
+def makeList(k):       # list of the binary element produced
+    a =[]
+    if(k == 0):
+        a.append(0)
+    while (k>0):
+        a.append(k % 10)
+        k//= 10
+    a.reverse()
+    return a
+def checkBinary(bin, l):
+    temp =[]
+    for i in range(len(bin)):
+        if(bin[i]== 1):
+            temp.append(l[i])
+    return temp
+l =[8,9,10,11,12,13,14,15,16]
+binlist =[]
+subsets =[]
+n = len(l)
+for i in range(2**n):
+    s = decimalToBinary(i)
+    arr = makeList(s)
+
+    binlist.append(arr)
+    
+    for i in binlist:
+       
+        k = 0
+       
+        while(len(i)!= n):
+            i.insert(k, 0)
+            k = k + 1
+for i in binlist:
+    subsets.append(checkBinary(i, l))
+
+def prodigy_LR(arr):
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
-    totals = [0,0,0,0,0,0,0,0,0]
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
     with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         f.truncate(0)
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                totals[0] += float(row[8])
-                totals[1] += float(row[9])
-                totals[2] += float(row[10])
-                totals[3] += float(row[11])
-                totals[4] += float(row[12])
-                totals[5] += float(row[13])
-                totals[6] += float(row[14])
-                totals[7] += float(row[15])
-                totals[8] += float(row[16])
-
-                f.write(row[8] + " " + row[10] + " " + row[11] + " " + row[12] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
-                f.flush()
+                
+                for num in arr:
+                    f.write(row[num] + " ")
+                f.write(row[3] + "\n")
             line_count += 1
-        train()
-    f.close()
+        f.close()
+        train(len(arr))
+        o.write(str(arr) + "\n")
 
-prodigy_LR()
+
+ca_res()
+
 
 '''
 
