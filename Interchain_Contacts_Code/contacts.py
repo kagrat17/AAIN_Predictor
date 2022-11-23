@@ -25,11 +25,10 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
         residuesFirst = list(list(model)[0])
         residuesSecond = list(list(model)[1])
 
-    print(len())
-
     all = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "SER",
            "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
 
+    ''' # CA method
     # residue identifier, CA atom
     atomsFirst = [[], []]
     atomsSecond = [[], []]
@@ -49,6 +48,29 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
                                       str(residuesSecond[i].get_id()[1]))
                 atomsSecond[1].append(atoms[j])
                 break
+    '''
+
+    # Heavy atom method
+    atomsFirst = [[], []]
+    atomsSecond = [[], []]
+    for i in range(len(residuesFirst)):
+        if residuesFirst[i].get_resname() in all:
+            atoms = list(residuesFirst[i].get_atoms())
+            atomsFirst[0].append(residuesFirst[i].get_resname() +
+                                str(residuesFirst[i].get_id()[1]))
+            atomsFirst[1].append([])
+            for j in range(len(atoms)):
+                if atoms[j].get_id() != "H":
+                    atomsFirst[1][i].append(atoms[j])
+    for i in range(len(residuesSecond)):
+        if residuesSecond[i].get_resname() in all:
+            atoms = list(residuesSecond[i].get_atoms())
+            atomsSecond[0].append(residuesSecond[i].get_resname() +
+                                str(residuesSecond[i].get_id()[1]))
+            atomsSecond[1].append([])
+            for j in range(len(atoms)):
+                if atoms[j].get_id() != "H":
+                    atomsSecond[1][i].append(atoms[j])
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
     contactTypes = [0, 0, 0, 0, 0, 0, 0]
@@ -87,36 +109,52 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
     countTot = 0
     # loop thorough residues in second chain
     for i in range(len(atomsSecond[0])):
+        count = 0
+        contacts = ""
         # loop through residues in first chain
         for j in range(len(atomsFirst[0])):
-            distance = atomsSecond[1][i] - atomsFirst[1][j]
-            if (distance) <= cutoff:
-                countTot += 1
-                
-                # classifying contacts
-                nonpolarFirst = atomsFirst[0][j][:3] in nonpolar
-                nonpolarSecond = atomsSecond[0][i][:3] in nonpolar
-                polarFirst = atomsFirst[0][j][:3] in polar
-                polarSecond = atomsSecond[0][i][:3] in polar
-                positiveFirst = atomsFirst[0][j][:3] in positive
-                positiveSecond = atomsSecond[0][i][:3] in positive
-                negativeFirst = atomsFirst[0][j][:3] in negative
-                negativeSecond = atomsSecond[0][i][:3] in negative
+            contact = False
+            # loop through atoms in second residue
+            minDist = 999999999
+            for k in range(len(atomsSecond[1][i])):
+                if contact: break
+                # loop through atoms in first residue
+                for l in range(len(atomsFirst[1][j])):
+                    distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
+                    minDist = min(minDist, distance)
+                    # HIdiff = abs(hydroIndexesKyte[cAlphaFirst[0][j][:3]]- hydroIndexesKyte[cAlphaSecond[0][i][:3]])
+                    # HIscaledDiff = 1-(HIdiff)/(4.5)
 
-                if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
-                    contactTypes[0] += 1
-                elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
-                    contactTypes[1] += 1
-                elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
-                    contactTypes[2] += 1
-                elif (nonpolarFirst or nonpolarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
-                    contactTypes[3] += 1
-                elif polarFirst and polarSecond:
-                    contactTypes[4] += 1
-                elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
-                    contactTypes[5] += 1
-                elif nonpolarFirst and nonpolarSecond:
-                    contactTypes[6] += 1
+                    if (minDist) <= cutoff:
+                        # classifying contacts
+                        nonpolarFirst = atomsFirst[0][j][:3] in nonpolar
+                        nonpolarSecond = atomsSecond[0][i][:3] in nonpolar
+                        polarFirst = atomsFirst[0][j][:3] in polar
+                        polarSecond = atomsSecond[0][i][:3] in polar
+                        positiveFirst = atomsFirst[0][j][:3] in positive
+                        positiveSecond = atomsSecond[0][i][:3] in positive
+                        negativeFirst = atomsFirst[0][j][:3] in negative
+                        negativeSecond = atomsSecond[0][i][:3] in negative
+
+                        if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
+                            contactTypes[0] += 1
+                        elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                            contactTypes[1] += 1
+                        elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                            contactTypes[2] += 1
+                        elif (nonpolarFirst or nonpolarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                            contactTypes[3] += 1
+                        elif polarFirst and polarSecond:
+                            contactTypes[4] += 1
+                        elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
+                            contactTypes[5] += 1
+                        elif nonpolarFirst and nonpolarSecond:
+                            contactTypes[6] += 1      
+
+                        contact = True
+                        break
+                    # contacts += cAlphaFirst[0][j] + " " + str(int((distance)*1000)/1000) + "\n"
+               
 
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
@@ -130,7 +168,7 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
     '''
 
     # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
-    f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
+    f.write(str(contactTypes[0] + contactTypes[1]) + " " +  str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " ")
     f.close()
 
 def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, outputFile):

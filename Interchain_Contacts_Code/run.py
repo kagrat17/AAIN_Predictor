@@ -1,21 +1,20 @@
-# Retreive data and run algorithms (such as score prediction) on it
-
+from Bio.PDB import *
+import math
+import csv
 import os
 import sys
 
 sys.path.append(os.getcwd() + "\\Machine_Learning")
 
-import csv
-import math
-from contacts import *
 from models import *
-from Bio.PDB import *
+from contacts import *
 
 '''
 cwd = os.getcwd()
 parser = PDBParser(PERMISSIVE=True, QUIET=True)
 # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
-struct = parser.get_structure("1an1", cwd + "\\PPI_Dataset\\pdb" + "1an1" + ".ent")
+struct = parser.get_structure(
+    "1an1", cwd + "\\PPI_Dataset\\pdb" + "1an1" + ".ent")
 print(str(list(struct)))
 '''
 
@@ -37,7 +36,7 @@ def getProdigyData():
 
 # print input parameters and experimental affinity to data file from the PPI Affinity dataset for machine learning
 
-
+# outdated
 def getPPIData():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\ppi_data.txt", 'a')
@@ -55,7 +54,7 @@ def getPPIData():
 
 # print input parameters and experimental affinity to data file from the SKEMPI dataset for machine learning
 
-
+# outdated
 def getSKEMPIData():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
@@ -72,6 +71,7 @@ def getSKEMPIData():
                 f.flush()
             line_count += 1
     f.close()
+
 
 def getPDBData():
     cwd = os.getcwd()
@@ -116,7 +116,7 @@ def loopSKEMPI():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(1, 30):
+    for dist in range(10, 11):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\SKEMPI_Dataset\\skempi.csv") as csv_file:
@@ -126,18 +126,18 @@ def loopSKEMPI():
             pdbs = set()
             for row in csv_reader:
                 try:
-                    if line_count != 0 and row[0][0:4] not in pdbs and float(row[8]) and row[0][0:4] != "1KBH":
+                    if line_count != 0 and row[0][0:4] not in pdbs and float(row[8]) and row[0][0:4] != "1KBH" and len(row[0]) == 8:
                         pdbs.add(row[0][0:4])
-                        calculateSKEMPI(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split(
-                            "_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
-                        f.write(row[8])
-                        # f.write(str(math.log(row[8])*) + "\n")
+                        calculateSKEMPI(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split("_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
+                        # f.write(row[8])
+                        f.write(
+                            str(math.log(float(row[8]))*298*0.001987204) + "\n")
                         f.flush()
                 except ValueError:
                     continue
                 line_count += 1
 
-        train()
+        train(1)
     f.close()
     o.close()
 
@@ -175,6 +175,35 @@ def loopProdigyContacts():
                 calculateHeavy(row[0][0:4], 0, 20, True, "A", "B", cwd +
                                "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
             line_count += 1
+
+
+def totContactsSKEMPI():
+    cwd = os.getcwd()
+    f = open(cwd + "\\Machine_Learning\\skempi_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    dist = 5.5
+    o.write(str(dist) + "\t")
+    with open(cwd + "\\SKEMPI_Dataset\\skempi.csv") as csv_file:
+        f.truncate(0)
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        pdbs = set()
+        for row in csv_reader:
+            try:
+                if line_count != 0 and row[0][0:4] not in pdbs and float(row[8]) and row[0][0:4] != "1KBH" and len(row[0]) == 8:
+                    pdbs.add(row[0][0:4])
+                    calculateSKEMPI(row[0][0:4], 0, dist, True, row[0].split("_")[1], row[0].split("_")[2], cwd + "\\Machine_Learning\\skempi_data.txt")
+                        # f.write(row[8])
+                    f.write(
+                        str(math.log(float(row[8]))*298*0.001987204) + "\n")
+                    f.flush()
+            except ValueError:
+                continue
+            line_count += 1
+
+        train(4)
+    f.close()
+    o.close()
 
 
 def totContactsProdigy():
@@ -274,7 +303,7 @@ def heavy():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(5,6):
+    for dist in range(5, 6):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -326,7 +355,7 @@ def heavy():
                             elif nonpolarFirst and nonpolarSecond:
                                 contactTypes[6] += 1
                             '''
-                            
+
                             nonpolarFirst = distance[1][0] in nonpolarAtoms
                             nonpolarSecond = distance[2][0] in nonpolarAtoms
                             polarFirst = distance[1][0] in polarAtoms
@@ -339,13 +368,14 @@ def heavy():
                             elif polarFirst and polarSecond:
                                 contactTypesAtoms[2] += 1
                             else:
-                                print(str(distance[1]) + " " + str(distance[2]))
-
+                                print(str(distance[1]) +
+                                      " " + str(distance[2]))
 
                     # numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
                     # numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
 
-                    f.write(str(contactTypesAtoms[0] + contactTypesAtoms[1] + contactTypesAtoms[2]) + " " + str(row[3]) + "\n")
+                    f.write(str(contactTypesAtoms[0] + contactTypesAtoms[1] +
+                            contactTypesAtoms[2]) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
             train(1)
@@ -357,7 +387,7 @@ def ca_res():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(9,10):
+    for dist in range(9, 10):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -375,51 +405,58 @@ def ca_res():
     f.close()
     o.close()
 
+
 final = []
+
 
 def decimalToBinary(n):   # converting decimal to binary
     b = 0
     i = 1
     while (n != 0):
         r = n % 2
-        b+= r * i
-        n//= 2
+        b += r * i
+        n //= 2
         i = i * 10
     return b
+
+
 def makeList(k):       # list of the binary element produced
-    a =[]
-    if(k == 0):
+    a = []
+    if (k == 0):
         a.append(0)
-    while (k>0):
+    while (k > 0):
         a.append(k % 10)
-        k//= 10
+        k //= 10
     a.reverse()
     return a
+
+
 def checkBinary(bin, l):
-    temp =[]
+    temp = []
     for i in range(len(bin)):
-        if(bin[i]== 1):
+        if (bin[i] == 1):
             temp.append(l[i])
     return temp
-l =[8,9,10,11,12,13,14,15,16]
-binlist =[]
-subsets =[]
+l = [8, 9, 10, 11,12,13,14,15,16]
+binlist = []
+subsets = []
 n = len(l)
 for i in range(2**n):
     s = decimalToBinary(i)
     arr = makeList(s)
 
     binlist.append(arr)
-    
+
     for i in binlist:
-       
+
         k = 0
-       
-        while(len(i)!= n):
+
+        while (len(i) != n):
             i.insert(k, 0)
             k = k + 1
 for i in binlist:
     subsets.append(checkBinary(i, l))
+
 
 def prodigy_LR(arr):
     cwd = os.getcwd()
@@ -431,7 +468,6 @@ def prodigy_LR(arr):
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                
                 for num in arr:
                     f.write(row[num] + " ")
                 f.write(row[3] + "\n")
@@ -441,7 +477,7 @@ def prodigy_LR(arr):
         o.write(str(arr) + "\n")
 
 
-ca_res()
+prodigy_LR([8, 9, 10, 11,12,13,14,15,16])
 
 
 '''
