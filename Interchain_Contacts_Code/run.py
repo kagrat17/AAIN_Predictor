@@ -457,27 +457,107 @@ for i in range(2**n):
 for i in binlist:
     subsets.append(checkBinary(i, l))
 
+# maxDiff = 9
+hydroIndexesKyte = {
+    "ALA": 1.80,
+    "ARG": -4.50,
+    "ASN": -3.50,
+    "ASP": -3.50,
+    "CYS":	2.50,
+    "GLN": -3.50,
+    "GLU": -3.50,
+    "GLY": -0.40,
+    "HIS": -3.20,
+    "ILE":	4.50,
+    "LEU":	3.80,
+    "LYS": -3.90,
+    "MET":	1.90,
+    "PHE":	2.80,
+    "PRO":	1.60,
+    "SER": -0.80,
+    "THR": -0.70,
+    "TRP": -0.90,
+    "TYR": -1.30,
+    "VAL":	4.20
+}
 
-def prodigy_LR(arr):
+def prodigy_LR(arr, dist):
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
+    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
+    positive = ["LYS", "ARG"]
+    negative = ["ASP", "GLU"]
+
     with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         f.truncate(0)
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
+                '''
                 for num in arr:
                     f.write(row[num] + " ")
+                '''
+                r = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
+                lines = r.readlines()
+                hi = [0,0]
+                contactTypes = [0, 0, 0, 0, 0, 0, 0]
+                for line in lines:
+                    line = line.split()
+                    if(float(line[0]) < dist):
+                        nonpolarFirst = line[3][:3] in nonpolar
+                        nonpolarSecond = line[4][:3] in nonpolar
+                        polarFirst = line[3][:3] in polar
+                        polarSecond = line[4][:3] in polar
+                        positiveFirst = line[3][:3] in positive
+                        positiveSecond = line[4][:3] in positive
+                        negativeFirst = line[3][:3] in negative
+                        negativeSecond = line[4][:3] in negative
+
+                        if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
+                            contactTypes[0] += 1
+                        elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                            contactTypes[1] += 1
+                        elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                            contactTypes[2] += 1
+                        elif (nonpolarFirst or nonpolarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
+                            contactTypes[3] += 1
+                        elif polarFirst and polarSecond:
+                            contactTypes[4] += 1
+                        elif (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
+                            contactTypes[5] += 1
+                        elif nonpolarFirst and nonpolarSecond:
+                            contactTypes[6] += 1
+
+                        HIdiff = abs(hydroIndexesKyte[line[3][:3]]- hydroIndexesKyte[line[4][:3]])
+                        HIscaledDiff = 1-(HIdiff)/(4.5)
+                        if HIscaledDiff >= 0:
+                            hi[0] += 1
+                        else:
+                            hi[1] += 1
+                # f.write(str(hi[0]) + " ")
+                # f.write(str(hi[1]) + " ")
+                f.write(str(contactTypes[0] + contactTypes[1]) + " ")
+                f.write(str(contactTypes[2]) + " ")
+                f.write(str(contactTypes[3]) + " ")
+                f.write(str(contactTypes[4]) + " ")
+                f.write(str(contactTypes[5]) + " ")
+                f.write(str(contactTypes[6]) + " ")
+                f.write(row[14] + " ")
+                f.write(row[15] + " ")
+                f.write(row[16] + " ")
                 f.write(row[3] + "\n")
             line_count += 1
+            f.flush()
         f.close()
-        train(len(arr))
+        # train(len(arr) + 2)
         o.write(str(arr) + "\n")
 
-
-prodigy_LR([8, 9, 10, 11,12,13,14,15,16])
+prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
+train(9)
 
 
 '''

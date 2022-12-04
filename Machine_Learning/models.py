@@ -47,16 +47,22 @@ def train(n):
     print("R^2 standard deviation: " + str(scores.std()))
     '''
     
+    arr = [[],[],[],[],[],[],[],[],[],[]]
+
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
     for i in range(0,1000):
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
         model.fit(X_train,y_train)
-        f.write(str(model.score(X_test, y_test)))
+        arr[0].append(model.score(X_test,y_test))
+        index = 1
         for val in model.feature_importances_:
-            f.write("\t" + str(val))
-        f.write("\n")
-        f.flush()
+            arr[index].append(val)
+            index += 1
+    for i in range(0,10):
+        f.write(str(sum(arr[i])/len(arr[i])) + "\t")    
+    f.write("\n")
+    f.flush()
 
 
     # print("Pearson correlation coefficient (r) and p-value: " + str(pearsonr(predicted, actual)))
@@ -110,7 +116,7 @@ def train(n):
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
 
-train(9)
+# train(11)
 
 '''
 [0.04796388 0.05097372 0.24011638 0.02770147 0.30584535 0.04650581 0.09848382 0.04965073 0.13275883]
