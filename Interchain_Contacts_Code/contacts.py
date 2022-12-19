@@ -260,11 +260,9 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
         contacts = ""
         # loop through residues in first chain
         for j in range(len(atomsFirst[0])):
-            # contact = False
             # loop through atoms in second residue
             minDist = 999999999
             for k in range(len(atomsSecond[1][i])):
-                # if contact: break
                 # loop through atoms in first residue
                 for l in range(len(atomsFirst[1][j])):
                     distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
@@ -278,7 +276,6 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
             if (minDist) <= cutoff:
                 f.write(str(minDist) + " " + atomsFirst[1][j][l].name + " " + atomsSecond[1]
                         [i][k].name + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
-                f.flush()
                 
                 # classifying contacts
                 nonpolarFirst = atomsFirst[0][j][:3] in nonpolar
@@ -315,7 +312,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
             f.write(str(num) + " ")
     '''
 
-    f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
+    # f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
     f.close()
 
 

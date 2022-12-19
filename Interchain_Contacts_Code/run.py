@@ -172,10 +172,9 @@ def loopProdigyContacts():
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                calculateHeavy(row[0][0:4], 0, 20, True, "A", "B", cwd +
-                               "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
+                calculateHeavy(row[0][0:4], 0, 10, True, "A", "B", cwd +
+                               "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
             line_count += 1
-
 
 def totContactsSKEMPI():
     cwd = os.getcwd()
@@ -496,7 +495,7 @@ def prodigy_LR(arr, dist):
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            if line_count != 0:
+            if row[0] == "1ACB.pdb":
                 '''
                 for num in arr:
                     f.write(row[num] + " ")
@@ -508,6 +507,9 @@ def prodigy_LR(arr, dist):
                 for line in lines:
                     line = line.split()
                     if(float(line[0]) < dist):
+
+                        o.write(line[3] + " " + line[4] + "\n")
+
                         nonpolarFirst = line[3][:3] in nonpolar
                         nonpolarSecond = line[4][:3] in nonpolar
                         polarFirst = line[3][:3] in polar
@@ -550,14 +552,17 @@ def prodigy_LR(arr, dist):
                 f.write(row[15] + " ")
                 f.write(row[16] + " ")
                 f.write(row[3] + "\n")
+
+                break
             line_count += 1
             f.flush()
         f.close()
         # train(len(arr) + 2)
         o.write(str(arr) + "\n")
 
-prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
-train(9)
+loopProdigyContacts()
+# prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
+# train(9)
 
 
 '''
