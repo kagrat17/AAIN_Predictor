@@ -16,7 +16,6 @@ def train(n):
 
     cwd = os.getcwd()
 
-    # adjust size based on test set that is being used
     x = np.empty((81,n)) 
     y = np.empty(81)
     
@@ -124,3 +123,5 @@ def train(n):
 ICs_charged-charged	ICs_charged-polar	ICs_charged-apolar	ICs_polar-polar	ICS_polar-apolar	ICs_apolar-apolar	NIS_polar	NIS_apolar	NIS_charged
 
 '''
+
+train(9)

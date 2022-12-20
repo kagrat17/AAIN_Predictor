@@ -138,7 +138,7 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
 
                         if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                             contactTypes[0] += 1
-                        elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                        elif negativeFirst and positiveSecond or positiveFirst and negativeSecond:
                             contactTypes[1] += 1
                         elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
                             contactTypes[2] += 1
@@ -205,7 +205,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
         atomsFirst[0].append(residuesFirst[i].get_resname() +
                              str(residuesFirst[i].get_id()[1]))
         for j in range(len(atoms)):
-            if atoms[j].get_id() != "H" and residuesFirst[i].get_resname() in all:
+            if atoms[j].get_id()[0] != "H" and residuesFirst[i].get_resname() in all:
                 if len(atomsFirst[1]) <= i:
                     atomsFirst[1].append([])
                 atomsFirst[1][i].append(atoms[j])
@@ -214,7 +214,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
         atomsSecond[0].append(residuesSecond[i].get_resname() +
                               str(residuesSecond[i].get_id()[1]))
         for j in range(len(atoms)):
-            if atoms[j].get_id() != "H" and residuesSecond[i].get_resname() in all:
+            if atoms[j].get_id()[0] != "H" and residuesSecond[i].get_resname() in all:
                 if len(atomsSecond[1]) <= i:
                     atomsSecond[1].append([])
                 atomsSecond[1][i].append(atoms[j])
@@ -289,7 +289,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
 
                 if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                     contactTypes[0] += 1
-                elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                elif negativeFirst and positiveSecond or positiveFirst and negativeSecond:
                     contactTypes[1] += 1
                 elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
                     contactTypes[2] += 1

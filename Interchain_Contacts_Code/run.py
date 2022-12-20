@@ -405,8 +405,7 @@ def ca_res():
     o.close()
 
 
-final = []
-
+'''
 
 def decimalToBinary(n):   # converting decimal to binary
     b = 0
@@ -456,6 +455,8 @@ for i in range(2**n):
 for i in binlist:
     subsets.append(checkBinary(i, l))
 
+'''
+
 # maxDiff = 9
 hydroIndexesKyte = {
     "ALA": 1.80,
@@ -495,7 +496,7 @@ def prodigy_LR(arr, dist):
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            if row[0] == "1ACB.pdb":
+            if line_count != 0:
                 '''
                 for num in arr:
                     f.write(row[num] + " ")
@@ -508,7 +509,7 @@ def prodigy_LR(arr, dist):
                     line = line.split()
                     if(float(line[0]) < dist):
 
-                        o.write(line[3] + " " + line[4] + "\n")
+                        # o.write(line[3] + " " + line[4] + " " + line[0] + "\n")
 
                         nonpolarFirst = line[3][:3] in nonpolar
                         nonpolarSecond = line[4][:3] in nonpolar
@@ -521,7 +522,7 @@ def prodigy_LR(arr, dist):
 
                         if positiveFirst and positiveSecond or negativeFirst and negativeSecond:
                             contactTypes[0] += 1
-                        elif negativeSecond and positiveFirst or positiveFirst and negativeSecond:
+                        elif negativeFirst and positiveSecond or positiveFirst and negativeSecond:
                             contactTypes[1] += 1
                         elif (polarFirst or polarSecond) and (positiveFirst or positiveSecond or negativeFirst or negativeSecond):
                             contactTypes[2] += 1
@@ -533,6 +534,8 @@ def prodigy_LR(arr, dist):
                             contactTypes[5] += 1
                         elif nonpolarFirst and nonpolarSecond:
                             contactTypes[6] += 1
+                        else:
+                            print(line[3] + " " + line[4] + " ERROR" + "\n")
 
                         HIdiff = abs(hydroIndexesKyte[line[3][:3]]- hydroIndexesKyte[line[4][:3]])
                         HIscaledDiff = 1-(HIdiff)/(4.5)
@@ -552,16 +555,14 @@ def prodigy_LR(arr, dist):
                 f.write(row[15] + " ")
                 f.write(row[16] + " ")
                 f.write(row[3] + "\n")
-
-                break
             line_count += 1
             f.flush()
         f.close()
         # train(len(arr) + 2)
         o.write(str(arr) + "\n")
 
-loopProdigyContacts()
-# prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
+# loopProdigyContacts()
+prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
 # train(9)
 
 
