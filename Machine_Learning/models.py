@@ -35,7 +35,7 @@ def train(n):
     x = scaler.fit_transform(x)
     # print(x)
 
-    model = RandomForestRegressor()
+    model = LinearRegression()
 
     '''
     # repeated cross validation
@@ -50,18 +50,23 @@ def train(n):
 
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    
+    '''
     for i in range(0,1000):
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
         model.fit(X_train,y_train)
         arr[0].append(model.score(X_test,y_test))
         index = 1
+        
         for val in model.feature_importances_:
             arr[index].append(val)
             index += 1
-    for i in range(0,10):
+        
+    for i in range(0,1):
         f.write(str(sum(arr[i])/len(arr[i])) + "\t")    
     f.write("\n")
     f.flush()
+    '''
 
 
     # print("Pearson correlation coefficient (r) and p-value: " + str(pearsonr(predicted, actual)))
@@ -70,10 +75,11 @@ def train(n):
 
     
 
-    # model.fit(x,y)
-    # print(model.coef_)
-    # pred = list(model.predict(x))
-    # print("Pearson correlation coefficient (r) and p-value on whole dataset: " + str(pearsonr(pred, list(y))))
+    model.fit(x,y)
+    f.write(str(model.coef_))
+    f.write(str(model.intercept_))
+    pred = list(model.predict(x))
+    f.write("Pearson correlation coefficient (r) and p-value on whole dataset: " + str(pearsonr(pred, list(y))))
     # print("R^2 on entire dataset: " + str(model.score(x,y)))
     # print(model.coef_)
 
@@ -124,4 +130,4 @@ ICs_charged-charged	ICs_charged-polar	ICs_charged-apolar	ICs_polar-polar	ICS_pol
 
 '''
 
-train(9)
+train(6)

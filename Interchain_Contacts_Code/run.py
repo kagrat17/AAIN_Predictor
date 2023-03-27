@@ -487,9 +487,31 @@ def prodigy_LR(arr, dist):
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
     nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
-    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
-    positive = ["LYS", "ARG"]
+    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR"]
+    positive = ["LYS", "ARG", "HIS"]
     negative = ["ASP", "GLU"]
+    all = {
+        "GLY": 0,
+        "ALA": 1,
+        "PRO": 2,
+        "VAL": 3, 
+        "ILE": 4, 
+        "MET": 5, 
+        "PHE": 6, 
+        "LEU": 7, 
+        "TRP": 8,
+        "SER": 9,
+        "THR": 10, 
+        "CYS": 11, 
+        "ASN": 12, 
+        "GLN": 13, 
+        "TYR": 14,
+        "LYS": 15, 
+        "ARG": 16, 
+        "HIS": 17,
+        "ASP": 18, 
+        "GLU": 19
+    }
 
     with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         f.truncate(0)
@@ -497,17 +519,26 @@ def prodigy_LR(arr, dist):
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                '''
+                grid = []
+                for i in range(0, 20):
+                    grid.append([])
+                    for j in range(0,20):
+                        grid[i].append(0)
+
+                
                 for num in arr:
                     f.write(row[num] + " ")
-                '''
+                f.write(row[3])
+                f.write("\n")
+                
+
                 r = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
                 lines = r.readlines()
                 hi = [0,0]
                 contactTypes = [0, 0, 0, 0, 0, 0, 0]
                 for line in lines:
                     line = line.split()
-                    if(float(line[0]) < dist):
+                    if float(line[0]) < dist:
 
                         # o.write(line[3] + " " + line[4] + " " + line[0] + "\n")
 
@@ -543,26 +574,54 @@ def prodigy_LR(arr, dist):
                             hi[0] += 1
                         else:
                             hi[1] += 1
+                        
+                        grid[all[line[3][:3]]][all[line[4][:3]]] += 1
                 # f.write(str(hi[0]) + " ")
                 # f.write(str(hi[1]) + " ")
+
+                '''
+                for i in range(20):
+                    for j in range(i,20):
+                        if i != j:
+                            f.write(str(grid[i][j]+grid[j][i]) + " ")
+                        else:
+                            f.write(str(grid[i][j]) + " ")
+                '''
+
+                
+                '''
                 f.write(str(contactTypes[0] + contactTypes[1]) + " ")
-                f.write(str(contactTypes[2]) + " ")
-                f.write(str(contactTypes[3]) + " ")
                 f.write(str(contactTypes[4]) + " ")
+                f.write(str(contactTypes[3]) + " ")
                 f.write(str(contactTypes[5]) + " ")
-                f.write(str(contactTypes[6]) + " ")
+                
+                f.write(row[3] + " ")
+                f.write("\n")
+                '''
+                
+                '''
+                f.write(row[8] + " ")
+                f.write(row[9] + " ")
+                f.write(row[10] + " ")
+                f.write(row[11] + " ")
+                f.write(row[12] + " ")
+                f.write(row[13] + " ")
+                '''
+                '''
                 f.write(row[14] + " ")
                 f.write(row[15] + " ")
                 f.write(row[16] + " ")
                 f.write(row[3] + "\n")
+                '''
+                
             line_count += 1
             f.flush()
         f.close()
         # train(len(arr) + 2)
-        o.write(str(arr) + "\n")
+        # o.write(str(arr) + "\n")
 
 # loopProdigyContacts()
-prodigy_LR([8, 9, 10, 11,12,13,14,15,16], 5.5)
+prodigy_LR([8,10,11,12,15,16], 5.5)
 # train(9)
 
 
