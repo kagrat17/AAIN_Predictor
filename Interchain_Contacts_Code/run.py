@@ -405,7 +405,7 @@ def ca_res():
     o.close()
 
 
-'''
+# making the list of subsets of features
 
 def decimalToBinary(n):   # converting decimal to binary
     b = 0
@@ -455,7 +455,7 @@ for i in range(2**n):
 for i in binlist:
     subsets.append(checkBinary(i, l))
 
-'''
+
 
 # maxDiff = 9
 hydroIndexesKyte = {
@@ -531,7 +531,7 @@ def prodigy_LR(arr, dist):
                 f.write(row[3])
                 f.write("\n")
                 
-
+                '''
                 r = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
                 lines = r.readlines()
                 hi = [0,0]
@@ -576,6 +576,8 @@ def prodigy_LR(arr, dist):
                             hi[1] += 1
                         
                         grid[all[line[3][:3]]][all[line[4][:3]]] += 1
+
+                '''
                 # f.write(str(hi[0]) + " ")
                 # f.write(str(hi[1]) + " ")
 
@@ -621,8 +623,9 @@ def prodigy_LR(arr, dist):
         # o.write(str(arr) + "\n")
 
 # loopProdigyContacts()
-prodigy_LR([8,10,11,12,15,16], 5.5)
-# train(9)
+for subset in subsets:
+    prodigy_LR(subset, 5.5)
+train(len(subset))
 
 
 '''
