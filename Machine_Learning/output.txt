@@ -1,2 +1,2 @@
 [-2.87603427 -3.21100038  3.70456341 -6.5294483   3.55550881  4.8970083 ]-10.055830020643818
-Pearson correlation coefficient (r) and p-value on whole dataset: (0.7364298120958579, 4.699691892685696e-15)
+Pearson correlation coefficient (r) and p-value on whole dataset: (0.7364298120958579, 4.699691892685696e-15)5.5	

@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.getcwd() + "\\Machine_Learning")
 
-from models import *
+# from models import *
 from contacts import *
 
 '''
@@ -229,7 +229,6 @@ def totContactsProdigy():
                     f.write(str(count) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
     f.close()
     o.close()
 
@@ -238,7 +237,8 @@ def heavy_and_ca():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(5, 6, 1):
+    dist = 5.5
+    for i in range(0,1):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -257,12 +257,10 @@ def heavy_and_ca():
                             count += 1
                     f.write(str(count) + " ")
                     f.flush()
-                    calculateCA(row[0][0:4], 0, dist, True, "A", "B",
-                                cwd + "\\Machine_Learning\\prodigy_data.txt")
+                    # calculateCA(row[0][0:4], 0, dist, True, "A", "B",cwd + "\\Machine_Learning\\prodigy_data.txt")
                     f.write(str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
     f.close()
     o.close()
 
@@ -622,10 +620,7 @@ def prodigy_LR(arr, dist):
         # train(len(arr) + 2)
         # o.write(str(arr) + "\n")
 
-# loopProdigyContacts()
-for subset in subsets:
-    prodigy_LR(subset, 5.5)
-train(len(subset))
+heavy_and_ca()
 
 
 '''
