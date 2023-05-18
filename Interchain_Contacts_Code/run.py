@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.getcwd() + "\\Machine_Learning")
 
-from models import *
+# from models import *
 from contacts import *
 
 '''
@@ -229,7 +229,6 @@ def totContactsProdigy():
                     f.write(str(count) + " " + str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
     f.close()
     o.close()
 
@@ -238,7 +237,8 @@ def heavy_and_ca():
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
     o = open(cwd + "\\Machine_Learning\\output.txt", 'a')
-    for dist in range(5, 6, 1):
+    dist = 5.5
+    for i in range(0,1):
         o.write(str(dist) + "\t")
         o.flush()
         with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -257,12 +257,10 @@ def heavy_and_ca():
                             count += 1
                     f.write(str(count) + " ")
                     f.flush()
-                    calculateCA(row[0][0:4], 0, dist, True, "A", "B",
-                                cwd + "\\Machine_Learning\\prodigy_data.txt")
+                    # calculateCA(row[0][0:4], 0, dist, True, "A", "B",cwd + "\\Machine_Learning\\prodigy_data.txt")
                     f.write(str(row[3]) + "\n")
                     f.flush()
                 line_count += 1
-            train()
     f.close()
     o.close()
 
@@ -405,7 +403,7 @@ def ca_res():
     o.close()
 
 
-'''
+# making the list of subsets of features
 
 def decimalToBinary(n):   # converting decimal to binary
     b = 0
@@ -455,7 +453,7 @@ for i in range(2**n):
 for i in binlist:
     subsets.append(checkBinary(i, l))
 
-'''
+
 
 # maxDiff = 9
 hydroIndexesKyte = {
@@ -531,7 +529,7 @@ def prodigy_LR(arr, dist):
                 f.write(row[3])
                 f.write("\n")
                 
-
+                '''
                 r = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + row[0][0:4] + ".txt")
                 lines = r.readlines()
                 hi = [0,0]
@@ -576,6 +574,8 @@ def prodigy_LR(arr, dist):
                             hi[1] += 1
                         
                         grid[all[line[3][:3]]][all[line[4][:3]]] += 1
+
+                '''
                 # f.write(str(hi[0]) + " ")
                 # f.write(str(hi[1]) + " ")
 
@@ -620,9 +620,7 @@ def prodigy_LR(arr, dist):
         # train(len(arr) + 2)
         # o.write(str(arr) + "\n")
 
-# loopProdigyContacts()
-prodigy_LR([8,10,11,12,15,16], 5.5)
-# train(9)
+heavy_and_ca()
 
 
 '''

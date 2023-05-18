@@ -1,6 +1,7 @@
 import os
 from tabulate import tabulate
 from Bio.PDB import *
+import csv
 
 # Detailed contact data for a given pdf, cutoff, and chains
 def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, outputFile):
@@ -154,8 +155,6 @@ def calculateSKEMPI(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, ou
                         contact = True
                         break
                     # contacts += cAlphaFirst[0][j] + " " + str(int((distance)*1000)/1000) + "\n"
-               
-
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
     numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
@@ -303,8 +302,8 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
                     contactTypes[6] += 1         
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
-    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6] + contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
-    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
+    numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
+    numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5]
 
     '''
     for type in contactTypesHI:
@@ -313,6 +312,7 @@ def calculateHeavy(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, out
     '''
 
     # f.write(str(numFavorable) + " " + str(numUnfavorable) + " ")
+    f.write(numFavorable + numUnfavorable + "\n")
     f.close()
 
 
@@ -434,12 +434,18 @@ def calculateCA(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, output
     numFavorable = contactTypes[1] + contactTypes[2] + contactTypes[4] + contactTypes[6]
     numUnfavorable = contactTypes[0] + contactTypes[3] + contactTypes[5] + contactTypes[0] + contactTypes[3] + contactTypes[5]
 
-    '''
-    for type in contactTypesHI:
-        for num in type:
-            f.write(str(num) + " ") 
-    '''
+    f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + "\n")
 
     # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
-    f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     f.close()
+
+cwd = os.getcwd()
+with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        if line_count != 0:
+            calculateCA(row[0][0:4], 10, 9, True, "A", "B",
+                        cwd + "\\Machine_Learning\\prodigy_data.txt")
+        line_count += 1

@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -15,8 +14,8 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((81,n)) 
-    y = np.empty(81)
+    x = np.empty((4,n)) 
+    y = np.empty(4)
     
 
     # load data into arrays x and y
@@ -30,11 +29,11 @@ def train(n):
             y[count] = float(line[n])
             count += 1
 
-    scaler = MinMaxScaler()
-    x = scaler.fit_transform(x)
+    # scaler = MinMaxScaler()
+    # x = scaler.fit_transform(x)
     # print(x)
 
-    model = LinearRegression()
+    model = RandomForestRegressor()
 
     '''
     # repeated cross validation
@@ -45,48 +44,58 @@ def train(n):
     print("R^2 standard deviation: " + str(scores.std()))
     '''
     
-    arr = [[],[],[],[],[],[],[],[],[],[]]
+    arr = [[],[],[],[],[],[],[],[],[]]
 
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+
+    # model.fit(x,y)
+    # for val in model.feature_importances_:
+    #   f.write(str(val) + "\t")
     
-    '''
-    for i in range(0,1000):
+    for i in range(0,100):
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
         model.fit(X_train,y_train)
         arr[0].append(model.score(X_test,y_test))
-        index = 1
+        arr[1].append(model.score(X_train,y_train))
+        index = 2
         
         for val in model.feature_importances_:
             arr[index].append(val)
             index += 1
         
-    for i in range(0,1):
+        predictions = model.predict(X_test)
+        arr[index].append(sm.tools.eval_measures.rmse(predictions, y_test, axis=0))
+
+        if i % 20 == 0:
+            print(i)
+    
+    
+    for i in range(0,n+3):
         f.write(str(sum(arr[i])/len(arr[i])) + "\t")    
     f.write("\n")
     f.flush()
-    '''
-
-
-    # print("Pearson correlation coefficient (r) and p-value: " + str(pearsonr(predicted, actual)))
-
-    # print()
 
     
+    
 
-    model.fit(x,y)
-    f.write(str(model.coef_))
-    f.write(str(model.intercept_))
-    pred = list(model.predict(x))
-    f.write("Pearson correlation coefficient (r) and p-value on whole dataset: " + str(pearsonr(pred, list(y))))
-    # print("R^2 on entire dataset: " + str(model.score(x,y)))
-    # print(model.coef_)
+    
+    '''
+    x1 = sm.add_constant(x)
+    model = sm.OLS(y,x1)
+    results = model.fit()
+    f.write(str(results.summary()) + "\n\n\n")
 
-    # f.write(str(model.score(x,y)) + "\n")
+    predictions = results.predict(x1)
+    f.write("RMSE: " + str(sm.tools.eval_measures.rmse(predictions, y, axis=0)) + "\n\n\n")
+
+    for pred in predictions:
+        f.write(str(pred) + "\n")
+    '''
+
 
     '''
     model.fit(x,y)
-    importances = model.feature_importances_
     print(importances)
     print(model.score(x,y))
     '''
@@ -119,14 +128,5 @@ def train(n):
     # plt.plot(np.array(pred), np.array(y), 'o')
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
-
-# train(11)
-
-'''
-[0.04796388 0.05097372 0.24011638 0.02770147 0.30584535 0.04650581 0.09848382 0.04965073 0.13275883]
-
-ICs_charged-charged	ICs_charged-polar	ICs_charged-apolar	ICs_polar-polar	ICS_polar-apolar	ICs_apolar-apolar	NIS_polar	NIS_apolar	NIS_charged
-
-'''
 
 train(6)
