@@ -492,11 +492,11 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
 '''
 
 cwd = os.getcwd()
-o = open(cwd + "\\Machine_Learning\\ppi_data.txt", 'a')
-with open(cwd + "\\PDBbind_PPI_used\\set_4.csv") as csv_file:
+o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            calculateHeavyByAny(row[0], 6, False, "A", "B", cwd + "\\Machine_Learning\\PPI_contacts_by_any\\" + row[0] + ".txt")
+            classifyHeavyByRes(row[0][0:4], 6, cwd + "\\Machine_Learning\\prodigy_data.txt")
         line_count += 1
