@@ -354,12 +354,12 @@ def calculateHeavyByAny(pdbFile, cutoff, specificChains, chain1, chain2, outputF
            "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
 
     # residue identifier, atoms in residue
-    atomsFirst = [[], []]
-    atomsSecond = [[], []]
+    atomsFirst = []
+    atomsSecond = []
     for i in range(len(residuesFirst)):
-        atomsFirst = list(residuesFirst[i].get_atoms())
+        atomsFirst.extend(list(residuesFirst[i].get_atoms()))
     for i in range(len(residuesSecond)):
-        atomsSecond = list(residuesSecond[i].get_atoms())
+        atomsSecond.extend(list(residuesSecond[i].get_atoms()))
 
     # loop through atoms in second residue
     for k in range(len(atomsSecond)):
@@ -367,7 +367,9 @@ def calculateHeavyByAny(pdbFile, cutoff, specificChains, chain1, chain2, outputF
         for l in range(len(atomsFirst)):
             distance = atomsSecond[k] - atomsFirst[l]
             if distance <= cutoff:
-                f.write(str(distance) + " " + atomsFirst[l].name + " " + atomsSecond[k].name)
+                f.write(str(distance) + " " + atomsFirst[l].name + " " + atomsSecond[k].name + "\n")
+    print(pdbFile + "\n")
+    f.close()
 
 # Contacts based on heavy atom residue pair method. Classifies contacts into 9 categories (using files in PRODIGY_contacts_by_res)
 def classifyHeavyByRes(pdbFile, cutoff, outputFile):
@@ -453,7 +455,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
 
     polar = ["O", "N", "S"]
     nonpolar = ["C"]
@@ -474,7 +476,7 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
             elif distance[1][0] in nonpolar and distance[2][0] in nonpolar:
                 contactTypes[2] += 1
 
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + "\n")
     o.close()
 
 ''' Prodigy
@@ -492,11 +494,11 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
 '''
 
 cwd = os.getcwd()
-o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
-with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+o = open(cwd + "/Machine_Learning/ppi_data.txt", 'a')
+with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByRes(row[0][0:4], 6, cwd + "\\Machine_Learning\\prodigy_data.txt")
+            classifyHeavyByAny(row[0], 6, cwd + "/Machine_Learning/output.txt")
         line_count += 1

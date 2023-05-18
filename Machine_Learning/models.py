@@ -15,8 +15,8 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((4,n)) 
-    y = np.empty(4)
+    x = np.empty((90,n)) 
+    y = np.empty(90)
     
 
     # load data into arrays x and y
@@ -34,7 +34,7 @@ def train(n):
     # x = scaler.fit_transform(x)
     # print(x)
 
-    model = RandomForestRegressor()
+    # model = RandomForestRegressor()
 
     '''
     # repeated cross validation
@@ -54,6 +54,7 @@ def train(n):
     # for val in model.feature_importances_:
     #   f.write(str(val) + "\t")
     
+    '''
     for i in range(0,100):
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
         model.fit(X_train,y_train)
@@ -77,11 +78,11 @@ def train(n):
     f.write("\n")
     f.flush()
 
-    
+    '''
     
 
     
-    '''
+    
     x1 = sm.add_constant(x)
     model = sm.OLS(y,x1)
     results = model.fit()
@@ -92,7 +93,7 @@ def train(n):
 
     for pred in predictions:
         f.write(str(pred) + "\n")
-    '''
+    
 
 
     '''
