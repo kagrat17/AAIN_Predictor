@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from scipy.stats import pearsonr
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
-import statsmodels.api as sm
 import pandas as pd
 import math
 
