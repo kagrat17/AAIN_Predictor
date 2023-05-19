@@ -268,7 +268,7 @@ def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputF
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
     struct = parser.get_structure(
-        pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+        pdbFile, cwd + "/PDBbind_PPI_used/" + pdbFile + ".ent.pdb")
     model = struct[0]
     f = open(outputFile, 'a')
     f.truncate(0)
@@ -293,21 +293,25 @@ def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputF
     atomsFirst = [[], []]
     atomsSecond = [[], []]
     for i in range(len(residuesFirst)):
+        if residuesFirst[i].get_resname() not in all:
+            continue
         atoms = list(residuesFirst[i].get_atoms())
         atomsFirst[0].append(residuesFirst[i].get_resname() +
                              str(residuesFirst[i].get_id()[1]))
         for j in range(len(atoms)):
-            if atoms[j].get_id()[0] != "H" and residuesFirst[i].get_resname() in all:
-                if len(atomsFirst[1]) <= i:
+            if atoms[j].get_id()[0] != "H":
+                while len(atomsFirst[1]) <= i:
                     atomsFirst[1].append([])
                 atomsFirst[1][i].append(atoms[j])
     for i in range(len(residuesSecond)):
+        if residuesSecond[i].get_resname() not in all:
+            continue
         atoms = list(residuesSecond[i].get_atoms())
         atomsSecond[0].append(residuesSecond[i].get_resname() +
                               str(residuesSecond[i].get_id()[1]))
         for j in range(len(atoms)):
-            if atoms[j].get_id()[0] != "H" and residuesSecond[i].get_resname() in all:
-                if len(atomsSecond[1]) <= i:
+            if atoms[j].get_id()[0] != "H":
+                while len(atomsSecond[1]) <= i:
                     atomsSecond[1].append([])
                 atomsSecond[1][i].append(atoms[j])
 
@@ -448,7 +452,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
 
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(HITypes[0]) + " " + str(HITypes[1]) + "\n")
+    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     o.close()
 
 # Contacts based on heavy atom any (not residue pair) method. Calculates total number of contacts.
@@ -479,20 +483,21 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + "\n")
     o.close()
 
-''' Prodigy
+
 cwd = os.getcwd()
 o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
 with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
-        if line_count != 0 and row[2] == "ER":
-            classifyHeavyByAny(row[0][0:4], 6, cwd + "\\Machine_Learning\\prodigy_data.txt")
+        if line_count != 0 and (row[2] == "OX"):
+            classifyHeavyByRes(row[0][0:4], 5.5, cwd + "\\Machine_Learning\\prodigy_data.txt")
             o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
             o.flush()
         line_count += 1
-'''
 
+
+''' PPI
 cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/ppi_data.txt", 'a')
 with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
@@ -500,5 +505,6 @@ with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByAny(row[0], 6, cwd + "/Machine_Learning/output.txt")
+            classifyHeavyByRes(row[0], 5.5, cwd + "/Machine_Learning/ppi_data.txt")
         line_count += 1
+'''

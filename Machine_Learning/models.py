@@ -15,11 +15,17 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((90,n)) 
-    y = np.empty(90)
+    x = np.empty((19,n)) 
+    y = np.empty(19)
+
+    '''
+    xppi = np.empty((90,n))
+    yppi = np.empty(90)
+    '''
     
 
     # load data into arrays x and y
+    '''
     with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
         lines = data.readlines()
         count = 0
@@ -29,12 +35,25 @@ def train(n):
                 x[count][i] = float(line[i])
             y[count] = float(line[n])
             count += 1
+    '''
+
+    
+    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
+        lines = data.readlines()
+        count = 0
+        for line in lines:
+            line = line.split(' ')
+            for i in range(0,n):
+                x[count][i] = float(line[i])
+            y[count] = float(line[n])
+            count += 1
+    
 
     # scaler = MinMaxScaler()
     # x = scaler.fit_transform(x)
     # print(x)
 
-    # model = RandomForestRegressor()
+    model = RandomForestRegressor()
 
     '''
     # repeated cross validation
@@ -45,7 +64,7 @@ def train(n):
     print("R^2 standard deviation: " + str(scores.std()))
     '''
     
-    arr = [[],[],[],[],[],[],[],[],[]]
+    arr = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
 
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
@@ -54,7 +73,7 @@ def train(n):
     # for val in model.feature_importances_:
     #   f.write(str(val) + "\t")
     
-    '''
+    
     for i in range(0,100):
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
         model.fit(X_train,y_train)
@@ -69,38 +88,42 @@ def train(n):
         predictions = model.predict(X_test)
         arr[index].append(sm.tools.eval_measures.rmse(predictions, y_test, axis=0))
 
+        for j in range(len(arr)):
+            f.write(str(arr[j][len(arr[j])-1]) + "\t")
+        f.write("\n")    
+
         if i % 20 == 0:
             print(i)
     
-    
-    for i in range(0,n+3):
-        f.write(str(sum(arr[i])/len(arr[i])) + "\t")    
     f.write("\n")
     f.flush()
+    
 
+    
     '''
-    
-
-    
-    
     x1 = sm.add_constant(x)
     model = sm.OLS(y,x1)
     results = model.fit()
     f.write(str(results.summary()) + "\n\n\n")
+    '''
 
+    '''
     predictions = results.predict(x1)
     f.write("RMSE: " + str(sm.tools.eval_measures.rmse(predictions, y, axis=0)) + "\n\n\n")
 
     for pred in predictions:
         f.write(str(pred) + "\n")
+    '''
     
 
 
     '''
     model.fit(x,y)
-    print(importances)
+    for val in model.feature_importances_:
+        f.write(str(val) + "\t")
     print(model.score(x,y))
     '''
+    
     '''
     x = sm.add_constant(x)
 
@@ -131,4 +154,4 @@ def train(n):
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
 
-train(6)
+train(10)
