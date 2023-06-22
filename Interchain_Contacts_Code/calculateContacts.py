@@ -55,9 +55,9 @@ def calculateCA(pdbFile, cutoff, specificChains, chain1, chain2, outputFile):
     # >0, <0
     HITypes = [0,0]
 
-    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
-    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
-    positive = ["LYS", "ARG"]
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP","TYR","CYS"]
+    polar = ["SER", "THR", "ASN", "GLN", ]
+    positive = ["LYS", "ARG","HIS"]
     negative = ["ASP", "GLU"]
 
     # maxDiff = 9
@@ -184,9 +184,9 @@ def calculateCASplitDistances(pdbFile, close, mid, far, specificChains, chain1, 
     # >0, <0
     HITypes = [0,0]
 
-    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
-    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
-    positive = ["LYS", "ARG"]
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP","TYR","CYS"]
+    polar = ["SER", "THR", "ASN", "GLN", ]
+    positive = ["LYS", "ARG","HIS"]
     negative = ["ASP", "GLU"]
     
     countTot = 0
@@ -383,9 +383,9 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     # >0, <0
     HITypes = [0,0]
 
-    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP"]
-    polar = ["SER", "THR", "CYS", "ASN", "GLN", "TYR", "HIS"]
-    positive = ["LYS", "ARG"]
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR","CYS"]
+    polar = ["SER", "THR", "ASN", "GLN"]
+    positive = ["LYS", "ARG","HIS"]
     negative = ["ASP", "GLU"]
 
     # maxDiff = 9
@@ -414,7 +414,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "\\Machine_Learning\\PRODIGY_contacts_by_res\\" + pdbFile + ".txt")
+    c = open(cwd + "\\Machine_Learning\\PPI_contacts_by_res\\" + pdbFile + ".txt")
     lines = c.readlines()
     for distance in lines:
         distance = distance.split(' ')
@@ -452,7 +452,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
 
-    o.write(str(contactTypes[0]+contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    o.write(str(contactTypes[0]+contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + "\n")
     o.close()
 
 # Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories.
@@ -483,7 +483,7 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
     o.close()
 
-
+''' PRODIGY
 cwd = os.getcwd()
 o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
 with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -491,13 +491,13 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByAny(row[0][0:4], 4, cwd + "\\Machine_Learning\\prodigy_data.txt")
+            classifyHeavyByRes(row[0][0:4], 5.5, cwd + "\\Machine_Learning\\prodigy_data.txt")
             o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
             o.flush()
         line_count += 1
+'''
 
 
-''' PPI
 cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/ppi_data.txt", 'a')
 with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
@@ -507,4 +507,3 @@ with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
         if line_count != 0:
             classifyHeavyByRes(row[0], 5.5, cwd + "/Machine_Learning/ppi_data.txt")
         line_count += 1
-'''
