@@ -452,14 +452,14 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
 
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    o.write(str(contactTypes[0]+contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     o.close()
 
-# Contacts based on heavy atom any (not residue pair) method. Calculates total number of contacts.
+# Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories.
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PRODIGY_contacts_by_any/" + pdbFile + ".txt")
 
     polar = ["O", "N", "S"]
     nonpolar = ["C"]
@@ -480,7 +480,7 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
             elif distance[1][0] in nonpolar and distance[2][0] in nonpolar:
                 contactTypes[2] += 1
 
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + "\n")
+    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
     o.close()
 
 
@@ -490,8 +490,8 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
-        if line_count != 0 and (row[2] == "OX"):
-            classifyHeavyByRes(row[0][0:4], 5.5, cwd + "\\Machine_Learning\\prodigy_data.txt")
+        if line_count != 0:
+            classifyHeavyByAny(row[0][0:4], 4, cwd + "\\Machine_Learning\\prodigy_data.txt")
             o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
             o.flush()
         line_count += 1
