@@ -15,8 +15,8 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((81,n)) 
-    y = np.empty(81)
+    x = np.empty((90,n)) 
+    y = np.empty(90)
 
     '''
     xppi = np.empty((90,n))
@@ -38,7 +38,7 @@ def train(n):
     '''
 
     
-    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
+    with open(cwd + "\\Machine_Learning\\ppi_data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
@@ -53,7 +53,7 @@ def train(n):
     # x = scaler.fit_transform(x)
     # print(x)
 
-    model = LinearRegression()
+    # model = LinearRegression()
 
     '''
     # repeated cross validation
@@ -114,15 +114,21 @@ def train(n):
     f.write("RMSE: " + str(sm.tools.eval_measures.rmse(predictions, y, axis=0)) + "\n\n\n")
 
     for pred in predictions:
-        f.write(str(pred) + "\n")
+    f.write(str(pred) + "\n")
     '''
     
+    x = sm.add_constant(x)
+
+    model2 = sm.OLS(y,x)
+    results = model2.fit()
+    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\t")
 
 
-    
+    '''
     model.fit(x,y)
     f.write(str(model.score(x,y)) + "\n")
     f.close()
+    '''
     
     
     '''

@@ -440,6 +440,7 @@ def calculateCA(pdbFile, hisplit, cutoff, specificChains, chain1, chain2, output
     # f.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     f.close()
 
+'''
 cwd = os.getcwd()
 with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -449,3 +450,4 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
             calculateCA(row[0][0:4], 10, 9, True, "A", "B",
                         cwd + "\\Machine_Learning\\prodigy_data.txt")
         line_count += 1
+'''

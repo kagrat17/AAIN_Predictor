@@ -387,8 +387,8 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     # >0, <0
     HITypes = [0,0]
 
-    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP","CYS","TYR"]
-    polar = ["SER", "THR", "ASN", "GLN"]
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR"]
+    polar = ["SER", "THR", "ASN", "GLN", "CYS"]
     positive = ["LYS", "ARG","HIS"]
     negative = ["ASP", "GLU"]
 
@@ -418,7 +418,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "\\Machine_Learning\\Prodigy_contacts_by_res\\" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PPI_contacts_by_res/" + pdbFile + ".txt")
     lines = c.readlines()
     for distance in lines:
         distance = distance.split(' ')
@@ -465,7 +465,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PRODIGY_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
 
     polar = ["O", "N", "S"]
     nonpolar = ["C"]
@@ -541,7 +541,7 @@ def getContactResidues(pdbFile, cutoff, outputFile):
 def getHydrogenBonds(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PRODIGY_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
 
     contactTypes = [0,0,0]
 
@@ -562,6 +562,7 @@ def getHydrogenBonds(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0] + contactTypes[1] + contactTypes[2]) + " ")
     o.close()
 
+'''
 cwd = os.getcwd()
 o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
 with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
@@ -571,10 +572,15 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         if line_count != 0:
             classifyHeavyByRes(row[0][0:4], 6.5, cwd + "/Machine_Learning/prodigy_data.txt")
             getHydrogenBonds(row[0][0:4], 6.5, cwd + "/Machine_Learning/prodigy_data.txt")
+            classifyHeavyByAny(row[0][0:4], 5.5, cwd + "/Machine_Learning/prodigy_data.txt")
             o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
             o.flush()
         line_count += 1
-train(10)
+train(13)
+'''
+
+
+# try combinations of features
 
 ''' Prodigy compute contacts
 cwd = os.getcwd()
@@ -610,14 +616,18 @@ while cutoff <= 10:
         cutoff += 0.5
 '''
 
-''' PPI
+# PPI
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/ppi_data.txt", 'a')
+o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
 with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
-        if line_count != 0 and row[0] == '1an1':
-            classifyHeavyByRes(row[0][0:4], 5.5, cwd + "/Machine_Learning/ppi_data.txt")
+        if line_count != 0:
+            classifyHeavyByRes(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
+            getHydrogenBonds(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
+            classifyHeavyByAny(row[0][0:4], 5.5, cwd + "/Machine_Learning/allFeatures.txt")
+            o.write("\n")
+            o.flush()
         line_count += 1
-'''
+
