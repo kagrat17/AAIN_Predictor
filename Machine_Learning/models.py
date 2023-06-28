@@ -15,8 +15,8 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((90,n)) 
-    y = np.empty(90)
+    x = np.empty((81,n)) 
+    y = np.empty(81)
 
     '''
     xppi = np.empty((90,n))
@@ -38,11 +38,11 @@ def train(n):
     '''
 
     
-    with open(cwd + "\\Machine_Learning\\ppi_data.txt") as data:
+    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
-            line = line.split('\t')
+            line = line.split(' ')
             for i in range(0,n):
                 x[count][i] = float(line[i])
             y[count] = float(line[n])
@@ -53,7 +53,7 @@ def train(n):
     # x = scaler.fit_transform(x)
     # print(x)
 
-    # model = RandomForestRegressor()
+    model = LinearRegression()
 
     '''
     # repeated cross validation
@@ -101,11 +101,12 @@ def train(n):
     
 
     
-    
+    '''
     x1 = sm.add_constant(x)
     model = sm.OLS(y,x1)
     results = model.fit()
     f.write(str(results.summary()) + "\n\n\n")
+    '''
     
 
     '''
@@ -118,12 +119,11 @@ def train(n):
     
 
 
-    '''
+    
     model.fit(x,y)
-    for val in model.feature_importances_:
-        f.write(str(val) + "\t")
-    print(model.score(x,y))
-    '''
+    f.write(str(model.score(x,y)) + "\n")
+    f.close()
+    
     
     '''
     x = sm.add_constant(x)
@@ -154,5 +154,3 @@ def train(n):
     # plt.plot(np.array(pred), np.array(y), 'o')
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
-
-train(8)
