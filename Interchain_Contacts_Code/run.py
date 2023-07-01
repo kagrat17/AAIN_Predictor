@@ -458,7 +458,7 @@ for i in binlist:
 def LR(arr):
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\allFeatures.txt", "r")
-    o = open(cwd + "\\Machine_Learning\\ppi_data.txt", 'a')
+    o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
 
     data = f.readlines()
 
@@ -474,7 +474,8 @@ def LR(arr):
 cwd = os.getcwd()
 ot = open(cwd + "\\Machine_Learning\\output.txt", 'a')
 
-'''
+# all subsets
+
 for subset in subsets:
     if len(subset) < 1:
         continue
@@ -484,9 +485,11 @@ for subset in subsets:
     train(len(subset))
     ot.write("\n")
     ot.flush()
-'''
 
-subset = [0,1,2,3,4,5]
+
+# specific subset
+'''
+subset = [1, 3, 5, 8, 9, 10]
 ot.write(str(subset) + "\t")
 ot.flush()
 LR(subset)
@@ -495,3 +498,4 @@ ot.write("\n")
 ot.flush()
 
 ot.close()
+'''

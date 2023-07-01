@@ -15,8 +15,8 @@ def train(n):
 
     cwd = os.getcwd()
 
-    x = np.empty((90,n)) 
-    y = np.empty(90)
+    x = np.empty((135,n)) 
+    y = np.empty(135)
 
     '''
     xppi = np.empty((90,n))
@@ -38,7 +38,7 @@ def train(n):
     '''
 
     
-    with open(cwd + "\\Machine_Learning\\ppi_data.txt") as data:
+    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
@@ -63,8 +63,6 @@ def train(n):
     print("R^2 mean: " + str(np.mean(scores)))
     print("R^2 standard deviation: " + str(scores.std()))
     '''
-    
-    arr = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
 
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
@@ -116,13 +114,24 @@ def train(n):
     for pred in predictions:
     f.write(str(pred) + "\n")
     '''
+
+    '''
+    coef = [-3.4727,-0.0912,0.1562,-0.0681,-0.0056,0.0091,-0.1263]
+    pred = []
+    for row in x:
+        pred.append(coef[0] + coef[1]*row[0] + coef[2]*row[1] + coef[3]*row[2] + coef[4]*row[3] + coef[5]*row[4] + coef[6]*row[5])
+    f.write(str(pearsonr(y,pred)))
+    '''
+    
+    # Normal training
     
     x = sm.add_constant(x)
 
     model2 = sm.OLS(y,x)
     results = model2.fit()
+    # f.write(str(results.summary()))
     f.write(str(results.aic) + "\t" + str(results.rsquared) + "\t")
-
+    
 
     '''
     model.fit(x,y)
@@ -160,3 +169,5 @@ def train(n):
     # plt.plot(np.array(pred), np.array(y), 'o')
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
+
+# train(6)

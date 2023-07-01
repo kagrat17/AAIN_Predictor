@@ -179,6 +179,30 @@ def calculateCASplitDistances(pdbFile, close, mid, far, specificChains, chain1, 
                                       str(residuesSecond[i].get_id()[1]))
                 atomsSecond[1].append(atoms[j])
                 break
+    
+    # residue identifier, atoms in residue
+    atomsFirst = [[], []]
+    atomsSecond = [[], []]
+    for i in range(len(residuesFirst)):
+        if residuesFirst[i].get_resname() not in all or residuesFirst[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesFirst[i].get_atoms())
+        for j in range(len(atoms)):
+            if atoms[j].get_id() == "CA":
+                atomsFirst[0].append(residuesFirst[i].get_resname() +
+                                    str(residuesFirst[i].get_full_id()[3][1]))
+                atomsFirst[1].append(atoms[j])
+                break
+    for i in range(len(residuesSecond)):
+        if residuesSecond[i].get_resname() not in all or residuesSecond[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesSecond[i].get_atoms())
+        for j in range(len(atoms)):
+            if atoms[j].get_id() == "CA":
+                atomsSecond[0].append(residuesSecond[i].get_resname() +
+                                    str(residuesSecond[i].get_full_id()[3][1]))
+                atomsSecond[1].append(atoms[j])
+                break
 
     # same charge, opposite charge, charged-polar, charged-nonpolar, polar-polar, polar-nonpolar, nonpolar-nonpolar
     contactTypesClose = [0, 0, 0, 0, 0, 0, 0]
@@ -296,43 +320,42 @@ def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputF
     atomsFirst = [[], []]
     atomsSecond = [[], []]
     for i in range(len(residuesFirst)):
-        if residuesFirst[i].get_resname() not in all:
+        if residuesFirst[i].get_resname() not in all or residuesFirst[i].get_full_id()[3][2] != " ":
             continue
         atoms = list(residuesFirst[i].get_atoms())
         atomsFirst[0].append(residuesFirst[i].get_resname() +
-                             str(residuesFirst[i].get_id()[1]))
-        for j in range(len(atoms)):
-            if atoms[j].get_id()[0] != "H":
-                while len(atomsFirst[1]) <= i:
-                    atomsFirst[1].append([])
-                atomsFirst[1][i].append(atoms[j])
+                             str(residuesFirst[i].get_full_id()[3][1]))
+        atomsFirst[1].append([])
+        atomsFirst[1][len(atomsFirst[1])-1].extend(atoms)
     for i in range(len(residuesSecond)):
-        if residuesSecond[i].get_resname() not in all:
+        if residuesSecond[i].get_resname() not in all or residuesSecond[i].get_full_id()[3][2] != " ":
             continue
         atoms = list(residuesSecond[i].get_atoms())
         atomsSecond[0].append(residuesSecond[i].get_resname() +
-                              str(residuesSecond[i].get_id()[1]))
-        for j in range(len(atoms)):
-            if atoms[j].get_id()[0] != "H":
-                while len(atomsSecond[1]) <= i:
-                    atomsSecond[1].append([])
-                atomsSecond[1][i].append(atoms[j])
+                              str(residuesSecond[i].get_full_id()[3][1]))
+        atomsSecond[1].append([])
+        atomsSecond[1][len(atomsSecond[1])-1].extend(atoms)
 
-    # loop thorough residues in second chain
+    
+    # loop through residues in second chain
     for i in range(len(atomsSecond[0])):
         # loop through residues in first chain
         for j in range(len(atomsFirst[0])):
-            # loop through atoms in second residue
             minDist = 999999999
+            atom1 = ""
+            atom2 = ""
+            # loop through atoms in second residue
             for k in range(len(atomsSecond[1][i])):
                 # loop through atoms in first residue
                 for l in range(len(atomsFirst[1][j])):
-                    distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
-                    minDist = min(minDist, distance)
-                    if atomsSecond[0][i] == "ASP189" and atomsFirst[0][j] == "LYS8" or atomsFirst[0][j] == "ASP189" and atomsSecond[0][i] == "LYS8":
-                        print(str(distance))
-            # if (minDist) <= cutoff:
-                # f.write(str(minDist) + " " + atomsFirst[1][j][l].name + " " + atomsSecond[1][i][k].name + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
+                    if(atomsFirst[1][j][l].name[0] != "H" and atomsSecond[1][i][k].name[0] != "H"):
+                        distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
+                        if distance < minDist:
+                            minDist = min(minDist, distance)
+                            atom1 = atomsFirst[1][j][l].name
+                            atom2 = atomsSecond[1][i][k].name
+            if (minDist) <= cutoff:
+                f.write(str(minDist) + " " + atom1 + " " + atom2 + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
 
 # Contacts based on heavy atom any (not residue pair) method. This calculates the contacts (without classifying them). This was used to generate the files in PRODIGY_contacts_by_any
 def calculateHeavyByAny(pdbFile, cutoff, specificChains, chain1, chain2, outputFile):
@@ -362,22 +385,36 @@ def calculateHeavyByAny(pdbFile, cutoff, specificChains, chain1, chain2, outputF
            "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
 
     # residue identifier, atoms in residue
-    atomsFirst = []
-    atomsSecond = []
+    atomsFirst = [[], []]
+    atomsSecond = [[], []]
     for i in range(len(residuesFirst)):
-        atomsFirst.extend(list(residuesFirst[i].get_atoms()))
+        if residuesFirst[i].get_resname() not in all or residuesFirst[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesFirst[i].get_atoms())
+        atomsFirst[0].append(residuesFirst[i].get_resname() +
+                             str(residuesFirst[i].get_full_id()[3][1]))
+        atomsFirst[1].append([])
+        atomsFirst[1][len(atomsFirst[1])-1].extend(atoms)
     for i in range(len(residuesSecond)):
-        atomsSecond.extend(list(residuesSecond[i].get_atoms()))
+        if residuesSecond[i].get_resname() not in all or residuesSecond[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesSecond[i].get_atoms())
+        atomsSecond[0].append(residuesSecond[i].get_resname() +
+                              str(residuesSecond[i].get_full_id()[3][1]))
+        atomsSecond[1].append([])
+        atomsSecond[1][len(atomsSecond[1])-1].extend(atoms)
 
-    # loop through atoms in second residue
-    for k in range(len(atomsSecond)):
-        # loop through atoms in first residue
-        for l in range(len(atomsFirst)):
-            distance = atomsSecond[k] - atomsFirst[l]
-            if distance <= cutoff:
-                f.write(str(distance) + " " + atomsFirst[l].name + " " + atomsSecond[k].name + "\n")
-    print(pdbFile + "\n")
-    f.close()
+    # loop thorough residues in second chain
+    for i in range(len(atomsSecond[0])):
+        # loop through residues in first chain
+        for j in range(len(atomsFirst[0])):
+            # loop through atoms in second residue
+            for k in range(len(atomsSecond[1][i])):
+                # loop through atoms in first residue
+                for l in range(len(atomsFirst[1][j])):
+                    distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
+                    if (distance) <= cutoff:
+                        f.write(str(distance) + " " + atomsFirst[1][j][l].name + " " + atomsSecond[1][i][k].name + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
 
 # Contacts based on heavy atom residue pair method. Classifies contacts into 9 categories (using files in PRODIGY_contacts_by_res)
 def classifyHeavyByRes(pdbFile, cutoff, outputFile):
@@ -387,8 +424,8 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     # >0, <0
     HITypes = [0,0]
 
-    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR"]
-    polar = ["SER", "THR", "ASN", "GLN", "CYS"]
+    nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR", "CYS"]
+    polar = ["SER", "THR", "ASN", "GLN"]
     positive = ["LYS", "ARG","HIS"]
     negative = ["ASP", "GLU"]
 
@@ -422,7 +459,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     lines = c.readlines()
     for distance in lines:
         distance = distance.split(' ')
-        if float(distance[0]) <= cutoff:
+        if float(distance[0]) <= cutoff and distance[1][0] != "H" and distance [2][0] != "H":
 
             # o.write(distance[3] + " " + distance[4] + " " + distance[0] + "\n")
 
@@ -465,7 +502,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PRODIGY_contacts_by_any/" + pdbFile + ".txt")
 
     polar = ["O", "N", "S"]
     nonpolar = ["C"]
@@ -486,16 +523,20 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
             elif distance[1][0] in nonpolar and distance[2][0] in nonpolar:
                 contactTypes[2] += 1
 
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+            if distance[3][:3] == "TYR":
+                o.write(distance[1] + " ")
+            if distance[4][:3] == "TYR":
+                o.write(distance[2] + " ")
+
+    # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
     o.close()
 
 # Gets total number of each type of residue in the complex
 def getTotalResidues(pdbFile, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
-    # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
     struct = parser.get_structure(
-        pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+        pdbFile, cwd + "/PDBbind_PPI_used/" + pdbFile + ".ent.pdb")
     model = struct[0]
     f = open(outputFile, 'a')
 
@@ -521,7 +562,7 @@ def getTotalResidues(pdbFile, outputFile):
 def getContactResidues(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "\\Machine_Learning\\Prodigy_contacts_by_res\\" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/PPI_contacts_by_res/" + pdbFile + ".txt")
 
     all = {"GLY":0, "ALA":0, "PRO":0, "VAL":0, "ILE":0, "MET":0, "PHE":0, "LEU":0, "TRP":0, "SER":0,
            "THR":0, "CYS":0, "ASN":0, "GLN":0, "TYR":0, "HIS":0, "LYS":0, "ARG":0, "ASP":0, "GLU":0}
@@ -579,29 +620,26 @@ with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
 train(13)
 '''
 
-
-# try combinations of features
-
-''' Prodigy compute contacts
 cwd = os.getcwd()
-o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
-with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
+o = open(cwd + "/Machine_Learning/ppi_data.txt", 'a')
+with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
-        if line_count != 0:
-            calculateHeavyByAny(row[0][0:4], 20, True, "A", "B", cwd + "\\Machine_Learning\\PRODIGY_contacts_by_any\\" + row[0][0:4] + ".txt")
-            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+        if line_count > 0:
+            # calculateHeavyByRes(row[0][0:4], 8, False, "A", "B", cwd + "/Machine_Learning/PPI_contacts_by_res/" + row[0][0:4] + ".txt")
+            classifyHeavyByRes(row[0][0:4], 5.5, cwd + "/Machine_Learning/ppi_data.txt")
+            o.write("\n")
             o.flush()
+            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
         line_count += 1
+     
+
 '''
-
-
-''' Prodigy classify contacts and train model
 cwd = os.getcwd()
 o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
-cutoff = 2
-while cutoff <= 10:
+cutoff = 5.5
+while cutoff <= 5.5:
     o.truncate(0)
     with open(cwd + "\\PRODIGY_Dataset\\PRODIGY_dataset.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -609,14 +647,15 @@ while cutoff <= 10:
         for row in csv_reader:
             if line_count != 0:
                 classifyHeavyByAny(row[0][0:4], cutoff, cwd + "\\Machine_Learning\\prodigy_data.txt")
-                o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                o.write("\n")
+                # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
                 o.flush()
             line_count += 1
-        train(6)
+        #train(6)
         cutoff += 0.5
 '''
-
-# PPI
+        
+'''
 cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
 with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
@@ -630,4 +669,5 @@ with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
             o.write("\n")
             o.flush()
         line_count += 1
+'''
 
