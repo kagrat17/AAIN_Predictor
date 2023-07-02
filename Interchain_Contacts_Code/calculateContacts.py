@@ -290,13 +290,13 @@ def calculateCASplitDistances(pdbFile, close, mid, far, specificChains, chain1, 
     f.close()
 
 # Contacts based on heavy atom residue pair method. This calculates the contacts (without classifying them). This was used to generate the files in PRODIGY_contacts_by_res
-# Omits hydrogens
+# Includes hydrogens
 def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
     struct = parser.get_structure(
-        pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+        pdbFile, cwd + "/Combined_Dataset/" + pdbFile + ".pdb")
     model = struct[0]
     f = open(outputFile, 'a')
     f.truncate(0)
@@ -349,14 +349,15 @@ def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputF
             for k in range(len(atomsSecond[1][i])):
                 # loop through atoms in first residue
                 for l in range(len(atomsFirst[1][j])):
-                    if(atomsFirst[1][j][l].name[0] != "H" and atomsSecond[1][i][k].name[0] != "H"):
-                        distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
-                        if distance < minDist:
-                            minDist = min(minDist, distance)
-                            atom1 = atomsFirst[1][j][l].name
-                            atom2 = atomsSecond[1][i][k].name
+                    distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
+                    if distance < minDist:
+                        minDist = min(minDist, distance)
+                        atom1 = atomsFirst[1][j][l].name
+                        atom2 = atomsSecond[1][i][k].name
             if (minDist) <= cutoff:
                 f.write(str(minDist) + " " + atom1 + " " + atom2 + " " + atomsFirst[0][j] + " " + atomsSecond[0][i] + " " + "\n")
+    
+    print(pdbFile + "\n")
 
 # Contacts based on heavy atom any (not residue pair) method. This calculates the contacts (without classifying them). This was used to generate the files in PRODIGY_contacts_by_any
 # Includes hydrogens
@@ -459,11 +460,11 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PPI_contacts_by_res/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_res/" + pdbFile + ".txt")
     lines = c.readlines()
     for distance in lines:
         distance = distance.split(' ')
-        if float(distance[0]) <= cutoff and distance[1][0] != "H" and distance [2][0] != "H":
+        if float(distance[0]) <= cutoff:
 
             # o.write(distance[3] + " " + distance[4] + " " + distance[0] + "\n")
 
@@ -506,7 +507,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PRODIGY_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_any/" + pdbFile + ".txt")
 
     polar = ["O", "N", "S"]
     nonpolar = ["C"]
@@ -581,7 +582,7 @@ def getContactResidues(pdbFile, cutoff, outputFile):
 def getHydrogenBonds(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PPI_contacts_by_any/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_any/" + pdbFile + ".txt")
 
     contactTypes = [0,0,0]
 
@@ -602,24 +603,24 @@ def getHydrogenBonds(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0] + contactTypes[1] + contactTypes[2]) + " ")
     o.close()
 
-'''
+
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/prodigy_data.txt", 'a')
-with open(cwd + "/PRODIGY_Dataset/PRODIGY_dataset.csv") as csv_file:
+o = open(cwd + "/Machine_Learning/data.txt", 'a')
+with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByRes(row[0][0:4], 6.5, cwd + "/Machine_Learning/prodigy_data.txt")
-            getHydrogenBonds(row[0][0:4], 6.5, cwd + "/Machine_Learning/prodigy_data.txt")
-            classifyHeavyByAny(row[0][0:4], 5.5, cwd + "/Machine_Learning/prodigy_data.txt")
-            o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+            classifyHeavyByRes(row[0][0:4], 6, cwd + "/Machine_Learning/data.txt")
+            getHydrogenBonds(row[0][0:4], 6, cwd + "/Machine_Learning/data.txt")
+            classifyHeavyByAny(row[0][0:4], 6.5, cwd + "/Machine_Learning/data.txt")
+            o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[2] + "\n")
             o.flush()
         line_count += 1
-train(13)
+train(13,171)
+
+
 '''
-
-
 cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/prodigy_data.txt", 'a')
 with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
@@ -634,26 +635,26 @@ with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
             # o.flush()
             # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
         line_count += 1
-
+'''
 
 '''
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/prodigy_data.txt", 'a')
-cutoff = 6.5
-while cutoff <= 6.5:
+o = open(cwd + "/Machine_Learning/data.txt", 'a')
+cutoff = 3
+while cutoff <= 15:
     o.truncate(0)
-    with open(cwd + "/PRODIGY_Dataset/PRODIGY_dataset.csv") as csv_file:
+    with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
         line_count = 0
         for row in csv_reader:
             if line_count > 0:
-                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/prodigy_data.txt")
-                # o.write(row[11] + " " + row[12] + " " + row[13] + " " + row[14] + "\n")
-                o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
+                # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                o.write(row[2] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
                 # o.write("\n")
                 o.flush()
             line_count += 1
-        train(6,81)
+        train(3,171)
         cutoff += 0.25
 '''
         

@@ -38,7 +38,7 @@ def train(n,size):
     '''
 
     
-    with open(cwd + "/Machine_Learning/prodigy_data.txt") as data:
+    with open(cwd + "/Machine_Learning/data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
