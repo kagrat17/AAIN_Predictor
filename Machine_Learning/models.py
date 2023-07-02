@@ -11,12 +11,12 @@ import pandas as pd
 import math
 
 
-def train(n):
+def train(n,size):
 
     cwd = os.getcwd()
 
-    x = np.empty((135,n)) 
-    y = np.empty(135)
+    x = np.empty((size,n)) 
+    y = np.empty(size)
 
     '''
     xppi = np.empty((90,n))
@@ -38,7 +38,7 @@ def train(n):
     '''
 
     
-    with open(cwd + "\\Machine_Learning\\prodigy_data.txt") as data:
+    with open(cwd + "/Machine_Learning/prodigy_data.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
@@ -130,7 +130,7 @@ def train(n):
     model2 = sm.OLS(y,x)
     results = model2.fit()
     # f.write(str(results.summary()))
-    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\t")
+    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n")
     
 
     '''
