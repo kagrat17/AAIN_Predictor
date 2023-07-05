@@ -3,6 +3,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RepeatedKFold
+from sklearn.model_selection import cross_val_score
 from scipy.stats import pearsonr
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
@@ -53,16 +55,24 @@ def train(n,size):
     # x = scaler.fit_transform(x)
     # print(x)
 
-    # model = LinearRegression()
-
-    '''
+    model = LinearRegression()
+    
     # repeated cross validation
     cv = RepeatedKFold(n_splits=4,n_repeats=10)
     scores = cross_val_score(model,x,y,cv=cv)
-    print(scores)
-    print("R^2 mean: " + str(np.mean(scores)))
-    print("R^2 standard deviation: " + str(scores.std()))
-    '''
+    i = 0
+    avg = 0
+    tot = 0
+    for score in scores:
+        avg += score
+        tot += score
+        if i == 3:
+            print(str(avg/4) + "\n")
+            avg = 0
+            i = 0
+        else:
+            i += 1
+    print("tot" + str(tot/40))
 
     cwd = os.getcwd()
     f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
@@ -125,12 +135,12 @@ def train(n,size):
     
     # Normal training
     
-    x = sm.add_constant(x)
+    """ x = sm.add_constant(x)
 
     model2 = sm.OLS(y,x)
     results = model2.fit()
     # f.write(str(results.summary()))
-    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n")
+    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n") """
     
 
     '''
@@ -170,4 +180,4 @@ def train(n,size):
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
 
-# train(6)
+train(7,135)

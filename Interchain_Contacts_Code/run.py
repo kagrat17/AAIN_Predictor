@@ -457,14 +457,14 @@ for i in binlist:
 
 def LR(arr):
     cwd = os.getcwd()
-    f = open(cwd + "\\Machine_Learning\\allFeatures.txt", "r")
-    o = open(cwd + "\\Machine_Learning\\prodigy_data.txt", 'a')
+    f = open(cwd + "/Machine_Learning/allFeatures.txt", "r")
+    o = open(cwd + "/Machine_Learning/data.txt", 'a')
 
     data = f.readlines()
 
     o.truncate(0)
     for line in data:
-        line = line.split("\t")
+        line = line.split(" ")
         for num in arr:
             o.write(line[num] + " ")
         o.write(line[13])
@@ -472,30 +472,28 @@ def LR(arr):
     o.close()
 
 cwd = os.getcwd()
-ot = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+ot = open(cwd + "/Machine_Learning/output.txt", 'a')
 
-# all subsets
-
+""" # all subsets
+ot.truncate(0)
 for subset in subsets:
     if len(subset) < 1:
         continue
     ot.write(str(subset) + "\t")
     ot.flush()
     LR(subset)
-    train(len(subset))
-    ot.write("\n")
-    ot.flush()
+    train(len(subset),171)
+    ot.flush() """
 
 
 # specific subset
-'''
-subset = [1, 3, 5, 8, 9, 10]
+
+subset = [0,1,3,4,5,6,10]
 ot.write(str(subset) + "\t")
 ot.flush()
 LR(subset)
-train(len(subset))
+train(len(subset),135)
 ot.write("\n")
 ot.flush()
 
 ot.close()
-'''

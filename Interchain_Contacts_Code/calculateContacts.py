@@ -290,7 +290,7 @@ def calculateCASplitDistances(pdbFile, close, mid, far, specificChains, chain1, 
     f.close()
 
 # Contacts based on heavy atom residue pair method. This calculates the contacts (without classifying them). This was used to generate the files in PRODIGY_contacts_by_res
-# Includes hydrogens
+# Combined_hres includes hydrogens in contacts. Combined_contacts_by_res does not.
 def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
@@ -603,22 +603,22 @@ def getHydrogenBonds(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0] + contactTypes[1] + contactTypes[2]) + " ")
     o.close()
 
-
+'''
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/data.txt", 'a')
+o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByRes(row[0][0:4], 6, cwd + "/Machine_Learning/data.txt")
-            getHydrogenBonds(row[0][0:4], 6, cwd + "/Machine_Learning/data.txt")
-            classifyHeavyByAny(row[0][0:4], 6.5, cwd + "/Machine_Learning/data.txt")
+            classifyHeavyByRes(row[0][0:4], 6, cwd + "/Machine_Learning/allFeatures.txt")
+            getHydrogenBonds(row[0][0:4], 6, cwd + "/Machine_Learning/allFeatures.txt")
+            classifyHeavyByAny(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
             o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[2] + "\n")
             o.flush()
         line_count += 1
-train(13,171)
-
+# train(13,171)
+'''
 
 '''
 cwd = os.getcwd()
@@ -637,41 +637,43 @@ with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
         line_count += 1
 '''
 
-'''
-cwd = os.getcwd()
+# Optimize cutoff
+
+""" cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/data.txt", 'a')
-cutoff = 3
-while cutoff <= 15:
+cutoff = 0
+while cutoff <= 8:
     o.truncate(0)
-    with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
+    with open(cwd + "/PRODIGY_Dataset/PRODIGY_dataset.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
         line_count = 0
         for row in csv_reader:
             if line_count > 0:
-                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
-                # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
-                o.write(row[2] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
+                getHydrogenBonds(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
+                o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+                # o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[2] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
                 # o.write("\n")
                 o.flush()
             line_count += 1
-        train(3,171)
-        cutoff += 0.25
-'''
-        
-'''
+        train(4,81)
+        cutoff += 0.25 """
+
+
+# all features        
+
 cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
-with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
+with open(cwd + "/Combined_Dataset/Combined135.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
+    o.truncate(0)
     for row in csv_reader:
-        if line_count != 0:
-            classifyHeavyByRes(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
-            getHydrogenBonds(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
-            classifyHeavyByAny(row[0][0:4], 5.5, cwd + "/Machine_Learning/allFeatures.txt")
-            o.write("\n")
+        if line_count > 0:
+            classifyHeavyByRes(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeatures.txt")
+            getHydrogenBonds(row[0][0:4], 5.25, cwd + "/Machine_Learning/allFeatures.txt")
+            classifyHeavyByAny(row[0][0:4], 4.5, cwd + "/Machine_Learning/allFeatures.txt")
+            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+            o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[3] + "\n")
             o.flush()
         line_count += 1
-'''
-
 
