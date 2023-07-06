@@ -180,4 +180,4 @@ def train(n,size):
     # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
     # plt.show()
 
-train(7,135)
+# train(7,135)

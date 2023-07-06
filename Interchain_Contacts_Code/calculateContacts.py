@@ -4,7 +4,7 @@ import csv
 import os
 import sys
 
-sys.path.append(os.getcwd() + "\\Machine_Learning")
+sys.path.append(os.getcwd() + "/Machine_Learning")
 
 from models import *
 
@@ -350,7 +350,7 @@ def calculateHeavyByRes(pdbFile, cutoff, specificChains, chain1, chain2, outputF
                 # loop through atoms in first residue
                 for l in range(len(atomsFirst[1][j])):
                     distance = atomsSecond[1][i][k] - atomsFirst[1][j][l]
-                    if distance < minDist:
+                    if distance < minDist and atomsFirst[1][j][l].name[0] != "H" and atomsSecond[1][i][k].name[0] != "H":
                         minDist = min(minDist, distance)
                         atom1 = atomsFirst[1][j][l].name
                         atom2 = atomsSecond[1][i][k].name
@@ -366,7 +366,7 @@ def calculateHeavyByAny(pdbFile, cutoff, specificChains, chain1, chain2, outputF
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
     struct = parser.get_structure(
-        pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+        pdbFile, cwd + "/Combined_Dataset/" + pdbFile + ".pdb")
     model = struct[0]
     f = open(outputFile, 'a')
     f.truncate(0)
@@ -503,7 +503,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0]+contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     o.close()
 
-# Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories.
+# Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories, no hydrogens.
 def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
@@ -579,7 +579,8 @@ def getContactResidues(pdbFile, cutoff, outputFile):
     o.write("\n")
     o.close()
 
-def getHydrogenBonds(pdbFile, cutoff, outputFile):
+def getHydrogenBonds(pdbFile, outputFile):
+    cutoff = 3.5
     cwd = os.getcwd()
     o = open(outputFile, 'a')
     c = open(cwd + "/Machine_Learning/Combined_contacts_by_any/" + pdbFile + ".txt")
@@ -620,22 +621,22 @@ with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
 # train(13,171)
 '''
 
-'''
+
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/prodigy_data.txt", 'a')
-with open(cwd + "/PDBbind_PPI_used/set_4.csv") as csv_file:
+with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
-        if line_count > 1:
-            os.rename(row[0][0:4] + '.pdb', cwd + '/PDBbind_PPI_used/' + row[0][0:4] + '.pdb')
-            # calculateHeavyByAny(row[0][0:4], 8, True, "A", "B", cwd + "/Machine_Learning/Prodigy_contacts_by_any/" + row[0][0:4] + ".txt")
+        if line_count > 81:
+            # os.rename(row[0][0:4] + '.pdb', cwd + '/PDBbind_PPI_used/' + row[0][0:4] + '.pdb')
+            calculateHeavyByRes(row[0][0:4], 20, False, "A", "B", cwd + "/Machine_Learning/Combined_contacts_by_res/" + row[0][0:4] + ".txt")
+            calculateHeavyByAny(row[0][0:4], 20, False, "A", "B", cwd + "/Machine_Learning/Combined_contacts_by_any/" + row[0][0:4] + ".txt")
             # classifyHeavyByRes(row[0][0:4], 5.5, cwd + "/Machine_Learning/ppi_data.txt")
             # o.write("\n")
             # o.flush()
             # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
         line_count += 1
-'''
+
 
 # Optimize cutoff
 
@@ -661,7 +662,7 @@ while cutoff <= 8:
 
 # all features        
 
-cwd = os.getcwd()
+""" cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined135.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -670,10 +671,10 @@ with open(cwd + "/Combined_Dataset/Combined135.csv") as csv_file:
     for row in csv_reader:
         if line_count > 0:
             classifyHeavyByRes(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeatures.txt")
-            getHydrogenBonds(row[0][0:4], 5.25, cwd + "/Machine_Learning/allFeatures.txt")
+            getHydrogenBonds(row[0][0:4], cwd + "/Machine_Learning/allFeatures.txt")
             classifyHeavyByAny(row[0][0:4], 4.5, cwd + "/Machine_Learning/allFeatures.txt")
             # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
             o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[3] + "\n")
             o.flush()
-        line_count += 1
+        line_count += 1 """
 
