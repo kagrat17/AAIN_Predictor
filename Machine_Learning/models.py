@@ -58,7 +58,7 @@ def train(n,size):
     model = LinearRegression()
     
     # repeated cross validation
-    cv = RepeatedKFold(n_splits=4,n_repeats=10)
+    """ cv = RepeatedKFold(n_splits=4,n_repeats=10)
     scores = cross_val_score(model,x,y,cv=cv)
     i = 0
     avg = 0
@@ -72,10 +72,10 @@ def train(n,size):
             i = 0
         else:
             i += 1
-    print("tot" + str(tot/40))
+    print("tot" + str(tot/40)) """
 
     cwd = os.getcwd()
-    f = open(cwd + "\\Machine_Learning\\output.txt", 'a')
+    f = open(cwd + "/Machine_Learning/output.txt", 'a')
 
     # model.fit(x,y)
     # for val in model.feature_importances_:
@@ -135,12 +135,12 @@ def train(n,size):
     
     # Normal training
     
-    """ x = sm.add_constant(x)
+    x = sm.add_constant(x)
 
     model2 = sm.OLS(y,x)
     results = model2.fit()
     # f.write(str(results.summary()))
-    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n") """
+    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n")
     
 
     '''
