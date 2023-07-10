@@ -13,12 +13,15 @@ import pandas as pd
 import math
 
 
-def train(n,size):
+def train(n,size1,size2):
 
     cwd = os.getcwd()
 
-    x = np.empty((size,n)) 
-    y = np.empty(size)
+    x = np.empty((size2,n)) 
+    y = np.empty(size2)
+
+    xt = np.empty((size1,n)) 
+    yt = np.empty(size1)
 
     '''
     xppi = np.empty((90,n))
@@ -38,9 +41,9 @@ def train(n,size):
             y[count] = float(line[n])
             count += 1
     '''
-
+    f = open(cwd + "/Machine_Learning/output.txt", 'a')
     
-    with open(cwd + "/Machine_Learning/data.txt") as data:
+    with open(cwd + "/Machine_Learning/data2.txt") as data:
         lines = data.readlines()
         count = 0
         for line in lines:
@@ -50,13 +53,29 @@ def train(n,size):
             y[count] = float(line[n])
             count += 1
     
+    with open(cwd + "/Machine_Learning/data.txt") as data:
+        lines = data.readlines()
+        count = 0
+        for line in lines:
+            line = line.split(' ')
+            for i in range(0,n):
+                xt[count][i] = float(line[i])
+            yt[count] = float(line[n])
+            count += 1
 
     # scaler = MinMaxScaler()
     # x = scaler.fit_transform(x)
     # print(x)
 
-    model = LinearRegression()
+    # model = LinearRegression()
+    model = RandomForestRegressor()
     
+    # random forest
+    model.fit(x,y)
+    for val in model.feature_importances_:
+        f.write(str(val) + "\n")
+    f.write(str(model.score(xt,yt)))
+
     # repeated cross validation
     """ cv = RepeatedKFold(n_splits=4,n_repeats=10)
     scores = cross_val_score(model,x,y,cv=cv)
@@ -67,117 +86,37 @@ def train(n,size):
         avg += score
         tot += score
         if i == 3:
-            print(str(avg/4) + "\n")
+            print(str(avg/4))
             avg = 0
             i = 0
         else:
             i += 1
-    print("tot" + str(tot/40)) """
-
-    cwd = os.getcwd()
-    f = open(cwd + "/Machine_Learning/output.txt", 'a')
-
-    # model.fit(x,y)
-    # for val in model.feature_importances_:
-    #   f.write(str(val) + "\t")
-    
-    '''
-    for i in range(0,100):
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
-        model.fit(X_train,y_train)
-        arr[0].append(model.score(X_test,y_test))
-        arr[1].append(model.score(X_train,y_train))
-        index = 2
-        
-        for val in model.feature_importances_:
-            arr[index].append(val)
-            index += 1
-        
-        predictions = model.predict(X_test)
-        arr[index].append(sm.tools.eval_measures.rmse(predictions, y_test, axis=0))
-
-        for j in range(len(arr)):
-            f.write(str(arr[j][len(arr[j])-1]) + "\t")
-        f.write("\n")    
-
-        if i % 20 == 0:
-            print(i)
-    
-    f.write("\n")
-    f.flush()
-    '''
+    print("tot avg: " + str(tot/40))
+    print(scores) """
     
 
+    # Other model
     
-    '''
-    x1 = sm.add_constant(x)
-    model = sm.OLS(y,x1)
-    results = model.fit()
-    f.write(str(results.summary()) + "\n\n\n")
-    '''
-    
+    """ # Prodigy
+    # coef = [-0.1830,0.0324,-0.0786,0.2035,-0.1525,-0.0530,0.1155,-0.0610,0.0136,-0.0196,4.2761,4.5334,4.4457,-446.5052]
+    # coef = [-0.1595,0.2377,-0.1674,-0.0244,-0.1740,1.1235]
+    coef = [0.3882,0.1459,-0.1269,0.0915,-0.0035,0.0840,-0.1280,0.0092,-0.0250,0.0051,-0.1402,-0.0375,-0.0449,-0.0022]
 
-    '''
-    predictions = results.predict(x1)
-    f.write("RMSE: " + str(sm.tools.eval_measures.rmse(predictions, y, axis=0)) + "\n\n\n")
-
-    for pred in predictions:
-    f.write(str(pred) + "\n")
-    '''
-
-    '''
-    coef = [-3.4727,-0.0912,0.1562,-0.0681,-0.0056,0.0091,-0.1263]
     pred = []
     for row in x:
-        pred.append(coef[0] + coef[1]*row[0] + coef[2]*row[1] + coef[3]*row[2] + coef[4]*row[3] + coef[5]*row[4] + coef[6]*row[5])
-    f.write(str(pearsonr(y,pred)))
-    '''
+        pred.append(coef[0]*row[0] + coef[1]*row[1] + coef[2]*row[2] + coef[3]*row[3] + coef[4]*row[4] + coef[5]*row[5] + coef[6]*row[6]+ coef[7]*row[7]+ coef[8]*row[8]+ coef[9]*row[9]+ coef[10]*row[10]+ coef[11]*row[11] + coef[12]*row[12] + coef[13])
+        # pred.append(coef[0]*row[0] + coef[1]*row[1] + coef[2]*row[2] + coef[3]*row[3] + coef[4]*row[4] + coef[5])
+    f.write(str(pearsonr(y,pred))) """
+    
     
     # Normal training
     
-    x = sm.add_constant(x)
+    """ x = sm.add_constant(x)
 
     model2 = sm.OLS(y,x)
     results = model2.fit()
     # f.write(str(results.summary()))
-    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n")
-    
+    # f.write(str(results.aic) + "\t" + str(results.rsquared) + "\n")
+    f.write(str(results.rsquared) + "\n") """
 
-    '''
-    model.fit(x,y)
-    f.write(str(model.score(x,y)) + "\n")
-    f.close()
-    '''
-    
-    
-    '''
-    x = sm.add_constant(x)
-
-    model2 = sm.OLS(y,x)
-    results = model2.fit()
-    f.write(str(results.aic) + "\t" + str(results.rsquared) + "\t")
-
-    ypred = results.predict(x)
-    f.write(str(pearsonr(y,ypred)) + "\t")
-    '''
-
-
-    # print(str(pearsonr(pred, y)))
-    # f.write(str(model.coef_[0]) + " " + str(model.coef_[1]) + "\n")
-    
-
-    '''
-    for i in range(0,81):
-        f.write(str(pred[i]) + " " + str(y[i]) + "\n")
-    '''
-
-    # print()
-    # for i in range(0,81):
-    #    print(str(x[i]) + " " + str(y[i]) + " " + str(pred[i]))
-
-
-    # plt.plot(np.array(pred), np.array(y), 'o')
-    # plt.plot(np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), np.array([min(np.min(y),np.min(pred)),max(np.max(y),np.max(pred))]), color='red')
-    # plt.show()
-
-# train(7,135)
+train(13,62,81)

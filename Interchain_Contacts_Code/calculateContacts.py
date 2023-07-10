@@ -499,8 +499,8 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
                 HITypes[0] += 1
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
-
-    o.write(str(sum(contactTypes)) + " ")
+    o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    # o.write(str(sum(contactTypes)) + " ")
     o.close()
 
 # Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories, no hydrogens.
@@ -529,8 +529,9 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
                 contactTypes[2] += 1
         else:
             break
-
-    o.write(str(sum(contactTypes)) + " ")
+    
+    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+    # o.write(str(sum(contactTypes)) + " ")
     o.close()
 
 # Gets total number of each type of residue in the complex
@@ -581,8 +582,7 @@ def getContactResidues(pdbFile, cutoff, outputFile):
     o.write("\n")
     o.close()
 
-def getHydrogenBonds(pdbFile, outputFile):
-    cutoff = 3.5
+def getHydrogenBonds(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
     c = open(cwd + "/Machine_Learning/Combined_contacts_by_any/" + pdbFile + ".txt")
@@ -606,26 +606,26 @@ def getHydrogenBonds(pdbFile, outputFile):
     o.write(str(contactTypes[0] + contactTypes[1] + contactTypes[2]) + " ")
     o.close()
 
-'''
-cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
+""" cwd = os.getcwd()
+o = open(cwd + "/Machine_Learning/data.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
+    o.truncate(0)
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count != 0:
-            classifyHeavyByRes(row[0][0:4], 6, cwd + "/Machine_Learning/allFeatures.txt")
-            getHydrogenBonds(row[0][0:4], 6, cwd + "/Machine_Learning/allFeatures.txt")
-            classifyHeavyByAny(row[0][0:4], 6.5, cwd + "/Machine_Learning/allFeatures.txt")
-            o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[2] + "\n")
+            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/data.txt")
+            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/data.txt")
+            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/data.txt")
+            o.write("\n")
+            # o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[2] + "\n")
             o.flush()
-        line_count += 1
-# train(13,171)
-'''
+        line_count += 1 """
 
 def sortFirst(line):
     return float(line.split(' ')[0])
 
+# sort the contacts by any by distance (to make looping through them faster)
 """ cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/data.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
@@ -652,41 +652,40 @@ with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
 
 # Optimize cutoff
 
-cwd = os.getcwd()
+""" cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/data.txt", 'a')
-cutoff = 2.5
-while cutoff <= 2.5:
+cutoff = 4.75
+while cutoff <= 4.75:
     o.truncate(0)
-    with open(cwd + "/PDBbind_PPI_used/PDBbind62.csv") as csv_file:
+    with open(cwd + "/PDBbind_PPI_used/PDBbind77.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
         line_count = 0
         for row in csv_reader:
             if line_count > 0:
-                classifyHeavyByRes(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
+                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
                 # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
                 o.write(row[3] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
                 # o.write("\n")
                 o.flush()
             line_count += 1
-        train(1,62)
-        cutoff += 0.25
+        train(1,77)
+        cutoff += 0.25 """
 
 
 # all features        
 
-""" cwd = os.getcwd()
+cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
-with open(cwd + "/Combined_Dataset/Combined135.csv") as csv_file:
+with open(cwd + "/PDBbind_PPI_used/PDBbind62.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     o.truncate(0)
     for row in csv_reader:
         if line_count > 0:
-            classifyHeavyByRes(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeatures.txt")
-            getHydrogenBonds(row[0][0:4], cwd + "/Machine_Learning/allFeatures.txt")
-            classifyHeavyByAny(row[0][0:4], 4.5, cwd + "/Machine_Learning/allFeatures.txt")
-            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
+            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeatures.txt")
+            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeatures.txt")
+            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeatures.txt")
+            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n") #row[14] + " " + row[15] + " " + row[16] + " " + 
             o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[3] + "\n")
             o.flush()
-        line_count += 1 """
-
+        line_count += 1

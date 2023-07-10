@@ -4,7 +4,7 @@ import csv
 import os
 import sys
 
-sys.path.append(os.getcwd() + "\\Machine_Learning")
+sys.path.append(os.getcwd() + "/Machine_Learning")
 
 from models import *
 from contacts import *
@@ -415,7 +415,6 @@ def decimalToBinary(n):   # converting decimal to binary
         i = i * 10
     return b
 
-
 def makeList(k):       # list of the binary element produced
     a = []
     if (k == 0):
@@ -434,26 +433,28 @@ def checkBinary(bin, l):
             temp.append(l[i])
     return temp
 
-l = [0,1,2,3,4,5,6,7,8,9,10,11,12]
-binlist = []
 subsets = []
-n = len(l)
-for i in range(2**n):
-    s = decimalToBinary(i)
-    arr = makeList(s)
 
-    binlist.append(arr)
+def combinations():
+    l = [0,1,2,3,4,5,6,7,8,9,10,11,12]
+    binlist = []
+    n = len(l)
+    for i in range(2**n):
+        s = decimalToBinary(i)
+        arr = makeList(s)
+
+        binlist.append(arr)
+
+        for i in binlist:
+
+            k = 0
+
+            while (len(i) != n):
+                i.insert(k, 0)
+                k = k + 1
 
     for i in binlist:
-
-        k = 0
-
-        while (len(i) != n):
-            i.insert(k, 0)
-            k = k + 1
-
-for i in binlist:
-    subsets.append(checkBinary(i, l))
+        subsets.append(checkBinary(i, l))
 
 def LR(arr):
     cwd = os.getcwd()
@@ -474,25 +475,26 @@ def LR(arr):
 cwd = os.getcwd()
 ot = open(cwd + "/Machine_Learning/output.txt", 'a')
 
-""" # all subsets
-ot.truncate(0)
+# all subsets
+""" ot.truncate(0)
+combinations()
 for subset in subsets:
     if len(subset) < 1:
         continue
     ot.write(str(subset) + "\t")
     ot.flush()
     LR(subset)
-    train(len(subset),171)
+    train(len(subset),77)
     ot.flush() """
 
 
 # specific subset
 
-subset = [0,1,3,4,5,6,10]
+subset = [0,1,2,3,4,5,6,7,8,9,10,11,12]
 ot.write(str(subset) + "\t")
 ot.flush()
 LR(subset)
-train(len(subset),135)
+train(13,143)
 ot.write("\n")
 ot.flush()
 
