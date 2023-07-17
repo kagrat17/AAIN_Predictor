@@ -539,7 +539,7 @@ def getTotalResidues(pdbFile, outputFile):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(
-        pdbFile, cwd + "/PDBbind_PPI_used/" + pdbFile + ".ent.pdb")
+        pdbFile, cwd + "/Combined_Dataset/" + pdbFile + ".pdb")
     model = struct[0]
     f = open(outputFile, 'a')
 
@@ -565,7 +565,7 @@ def getTotalResidues(pdbFile, outputFile):
 def getContactResidues(pdbFile, cutoff, outputFile):
     cwd = os.getcwd()
     o = open(outputFile, 'a')
-    c = open(cwd + "/Machine_Learning/PPI_contacts_by_res/" + pdbFile + ".txt")
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_res/" + pdbFile + ".txt")
 
     all = {"GLY":0, "ALA":0, "PRO":0, "VAL":0, "ILE":0, "MET":0, "PHE":0, "LEU":0, "TRP":0, "SER":0,
            "THR":0, "CYS":0, "ASN":0, "GLN":0, "TYR":0, "HIS":0, "LYS":0, "ARG":0, "ASP":0, "GLU":0}
@@ -604,6 +604,59 @@ def getHydrogenBonds(pdbFile, cutoff, outputFile):
                 contactTypes[2] += 1
 
     o.write(str(contactTypes[0] + contactTypes[1] + contactTypes[2]) + " ")
+    o.close()
+
+def getHI(pdbFile, cutoff, outputFile):
+    # >0, <0
+    HITypes = [0,0]
+
+    # maxDiff = 9
+    hydroIndexesKyte = {
+        "ALA": 1.80,
+        "ARG": -4.50,
+        "ASN": -3.50,
+        "ASP": -3.50,
+        "CYS":	2.50,
+        "GLN": -3.50,
+        "GLU": -3.50,
+        "GLY": -0.40,
+        "HIS": -3.20,
+        "ILE":	4.50,
+        "LEU":	3.80,
+        "LYS": -3.90,
+        "MET":	1.90,
+        "PHE":	2.80,
+        "PRO":	1.60,
+        "SER": -0.80,
+        "THR": -0.70,
+        "TRP": -0.90,
+        "TYR": -1.30,
+        "VAL":	4.20
+    }
+
+    total = 0
+
+    cwd = os.getcwd()
+    o = open(outputFile, 'a')
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_res/" + pdbFile + ".txt")
+    lines = c.readlines()
+    for distance in lines:
+        distance = distance.split(' ')
+        if float(distance[0]) <= cutoff:
+
+            # o.write(distance[3] + " " + distance[4] + " " + distance[0] + "\n")
+
+            HIdiff = abs(hydroIndexesKyte[distance[3][:3]]- hydroIndexesKyte[distance[4][:3]])
+            HIscaledDiff = 1-(HIdiff)/(4.5)
+            total += HIscaledDiff
+
+            if HIscaledDiff >= 0:
+                HITypes[0] += 1
+            elif HIscaledDiff < 0:
+                HITypes[1] += 1
+
+    # o.write(str(HITypes[0]) + " " + str(HITypes[1]) + " ")
+    o.write(str(round(total,2)) + " ")
     o.close()
 
 """ cwd = os.getcwd()
@@ -653,39 +706,42 @@ with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
 # Optimize cutoff
 
 """ cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/data.txt", 'a')
-cutoff = 4.75
-while cutoff <= 4.75:
+o = open(cwd + "/Machine_Learning/data2.txt", 'a')
+cutoff = 0
+while cutoff <= 20:
     o.truncate(0)
-    with open(cwd + "/PDBbind_PPI_used/PDBbind77.csv") as csv_file:
+    with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
         line_count = 0
         for row in csv_reader:
             if line_count > 0:
-                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data.txt")
+                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data2.txt")
                 # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
                 o.write(row[3] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
                 # o.write("\n")
                 o.flush()
             line_count += 1
-        train(1,77)
+        train(1,81,141,0.5)
         cutoff += 0.25 """
 
-
-# all features        
+# loop through dataset        
 
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/allFeatures.txt", 'a')
-with open(cwd + "/PDBbind_PPI_used/PDBbind62.csv") as csv_file:
+o = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", 'a')
+with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     o.truncate(0)
     for row in csv_reader:
         if line_count > 0:
-            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeatures.txt")
-            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeatures.txt")
-            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeatures.txt")
-            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n") #row[14] + " " + row[15] + " " + row[16] + " " + 
-            o.write(row[4] + " " + row[5] + " " + row[6] + " " + row[3] + "\n")
+            # getContactResidues(row[0][0:4], 4.75, cwd + "/Machine_Learning/output.txt")
+            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n") # row[14] + " " + row[15] + " " + row[16] + " " + 
+            o.write(row[4] + " " + row[5] + " " + row[6] + " ")
+            o.flush()
+            getHI(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            o.write(row[3] + "\n")
             o.flush()
         line_count += 1

@@ -436,7 +436,7 @@ def checkBinary(bin, l):
 subsets = []
 
 def combinations():
-    l = [0,1,2,3,4,5,6,7,8,9,10,11,12]
+    l = [6,7,8,9,10,11,12]
     binlist = []
     n = len(l)
     for i in range(2**n):
@@ -458,7 +458,7 @@ def combinations():
 
 def LR(arr):
     cwd = os.getcwd()
-    f = open(cwd + "/Machine_Learning/allFeatures.txt", "r")
+    f = open(cwd + "/Machine_Learning/allFeaturesProd.txt", "r")
     o = open(cwd + "/Machine_Learning/data.txt", 'a')
 
     data = f.readlines()
@@ -484,18 +484,24 @@ for subset in subsets:
     ot.write(str(subset) + "\t")
     ot.flush()
     LR(subset)
-    train(len(subset),77)
+    train(len(subset),81,60,0.5)
     ot.flush() """
 
 
 # specific subset
 
-subset = [0,1,2,3,4,5,6,7,8,9,10,11,12]
+subset = [7,12]
 ot.write(str(subset) + "\t")
 ot.flush()
 LR(subset)
-train(13,143)
+# train(9,81,62)
 ot.write("\n")
 ot.flush()
 
-ot.close()
+
+# iterate lambda for ridge regression
+""" a = 0
+while a < 1:
+    train(13,81,60,a)
+    a += 0.01
+"""
