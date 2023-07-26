@@ -436,7 +436,7 @@ def checkBinary(bin, l):
 subsets = []
 
 def combinations():
-    l = [6,7,8,9,10,11,12]
+    l = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
     binlist = []
     n = len(l)
     for i in range(2**n):
@@ -458,8 +458,8 @@ def combinations():
 
 def LR(arr):
     cwd = os.getcwd()
-    f = open(cwd + "/Machine_Learning/allFeaturesProd.txt", "r")
-    o = open(cwd + "/Machine_Learning/data.txt", 'a')
+    f = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", "r")
+    o = open(cwd + "/Machine_Learning/data2.txt", 'a')
 
     data = f.readlines()
 
@@ -468,7 +468,7 @@ def LR(arr):
         line = line.split(" ")
         for num in arr:
             o.write(line[num] + " ")
-        o.write(line[13])
+        o.write(line[14])
         o.flush()
     o.close()
 
@@ -484,17 +484,17 @@ for subset in subsets:
     ot.write(str(subset) + "\t")
     ot.flush()
     LR(subset)
-    train(len(subset),81,60,0.5)
-    ot.flush() """
-
+    train(len(subset),81,141,0.5)
+    ot.flush()
+ """
 
 # specific subset
 
-subset = [7,12]
+subset = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
 ot.write(str(subset) + "\t")
 ot.flush()
 LR(subset)
-# train(9,81,62)
+train(14,81,141,1.740)
 ot.write("\n")
 ot.flush()
 

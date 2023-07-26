@@ -500,6 +500,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
     o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    # o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(sum(contactTypes)) + " ")
     # o.write(str(sum(contactTypes)) + " ")
     o.close()
 
@@ -531,6 +532,7 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
             break
     
     o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+    # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(sum(contactTypes)) + " ")
     # o.write(str(sum(contactTypes)) + " ")
     o.close()
 
@@ -736,12 +738,12 @@ with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
         if line_count > 0:
             # getContactResidues(row[0][0:4], 4.75, cwd + "/Machine_Learning/output.txt")
             classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
-            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
-            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            # getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            # classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
             # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n") # row[14] + " " + row[15] + " " + row[16] + " " + 
-            o.write(row[4] + " " + row[5] + " " + row[6] + " ")
+            # o.write(row[4] + " " + row[5] + " " + row[6] + " ")
             o.flush()
-            getHI(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            # getHI(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
             o.write(row[3] + "\n")
             o.flush()
         line_count += 1
