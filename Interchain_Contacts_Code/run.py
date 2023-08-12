@@ -4,6 +4,8 @@ import csv
 import os
 import sys
 
+import itertools
+
 sys.path.append(os.getcwd() + "/Machine_Learning")
 
 from models import *
@@ -436,10 +438,11 @@ def checkBinary(bin, l):
 subsets = []
 
 def combinations():
-    l = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+    l = [0,1,2,4,6,7,10,15,18]
     binlist = []
     n = len(l)
     for i in range(2**n):
+        print(i)
         s = decimalToBinary(i)
         arr = makeList(s)
 
@@ -458,17 +461,40 @@ def combinations():
 
 def LR(arr):
     cwd = os.getcwd()
-    f = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", "r")
-    o = open(cwd + "/Machine_Learning/data2.txt", 'a')
-
+    f = open(cwd + "/Machine_Learning/er.txt", "r")
+    g = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", "r")
     data = f.readlines()
+    data2 = g.readlines()
+    o = open(cwd + "/Machine_Learning/data2.txt", 'a')
+    o.truncate(0)
+
+    """ with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        o.truncate(0)
+        for row in csv_reader:
+            if line_count > 0:
+                if row[7] == 'A' or row[7] == 'AB':
+                    line = data[line_count-1].split(" ")
+                    for num in arr:
+                        o.write(line[num] + " ")
+                    o.write(line[14])
+                    o.flush()
+            line_count += 1
+    o.close() """
+
 
     o.truncate(0)
-    for line in data:
-        line = line.split(" ")
+    for line, line2 in zip(data,data2):
+        line = line.split("\t")
+        line2 = line2.split(" ")
         for num in arr:
-            o.write(line[num] + " ")
-        o.write(line[14])
+            if num >= 20:
+                o.write(line2[num-20] + " ")
+            else:
+                o.write(line[num] + " ")
+        # o.write(line[13])
+        o.write(line[20])
         o.flush()
     o.close()
 
@@ -476,28 +502,34 @@ cwd = os.getcwd()
 ot = open(cwd + "/Machine_Learning/output.txt", 'a')
 
 # all subsets
-""" ot.truncate(0)
-combinations()
-for subset in subsets:
+# ot.truncate(0)
+
+# s = set([0,1,4,5,6,7,10,18,21,22,23,24,25,26,27,30,33])
+# combos = sum(map(lambda r: list(itertools.combinations(s, r)), range(1, len(s)+1)), [])
+
+# combinations()
+""" i = 0
+while i < len(combos):
+    subset = combos[i]
     if len(subset) < 1:
         continue
-    ot.write(str(subset) + "\t")
+    ot.write(str(list(subset)) + "\t")
     ot.flush()
     LR(subset)
     train(len(subset),81,141,0.5)
-    ot.flush()
- """
+    i += 1 """
+
 
 # specific subset
 
-subset = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
-ot.write(str(subset) + "\t")
-ot.flush()
+subset = [0, 33, 4, 6, 10, 18, 21, 22, 23, 24, 25, 26, 27, 30]
+# subset = [8]
+# ot.write(str(subset) + "\t")
+# ot.flush()
 LR(subset)
 train(14,81,141,1.740)
 ot.write("\n")
 ot.flush()
-
 
 # iterate lambda for ridge regression
 """ a = 0
