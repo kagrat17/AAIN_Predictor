@@ -429,6 +429,8 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     # >0, <0
     HITypes = [0,0]
 
+    tyr = [0, 0, 0, 0, 0, 0, 0]
+
     nonpolar = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR", "CYS"]
     polar = ["SER", "THR", "ASN", "GLN"]
     positive = ["LYS", "ARG","HIS"]
@@ -502,6 +504,7 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
     o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     # o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(sum(contactTypes)) + " ")
     # o.write(str(sum(contactTypes)) + " ")
+    # o.write(str(tyr[3]) + " " + str(tyr[5]) + " " + str(tyr[6]) + " ")
     o.close()
 
 # Contacts based on heavy atom any (not residue pair) method. Classifies into 3 categories, no hydrogens.
@@ -514,12 +517,28 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
     nonpolar = ["C"]
 
     contactTypes = [0,0,0]
+    count = [0,0,0]
 
     lines = c.readlines()
     countTot = 0
     for distance in lines:
         distance = distance.split(' ')
         if float(distance[0]) <= cutoff:
+
+            if distance[1][0] == "C":
+                count[0] += 1
+            elif distance[1][0] == "N":
+                count[1] += 1
+            elif distance[1][0] == "O":
+                count[2] += 1
+
+            if distance[2][0] == "C":
+                count[0] += 1
+            elif distance[2][0] == "N":
+                count[1] += 1
+            elif distance[2][0] == "O":
+                count[2] += 1
+
             countTot += 1
 
             if distance[1][0] in polar and distance[2][0] in polar:
@@ -530,8 +549,9 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
                 contactTypes[2] += 1
         else:
             break
-    
-    o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+
+    o.write(str(count[0]) + " " + str(count[1]) + " " + str(count[2]) + " ")
+    # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
     # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(sum(contactTypes)) + " ")
     # o.write(str(sum(contactTypes)) + " ")
     o.close()
@@ -661,6 +681,108 @@ def getHI(pdbFile, cutoff, outputFile):
     o.write(str(round(total,2)) + " ")
     o.close()
 
+def atomByRes(pdbFile, cutoff, outputFile):
+    cwd = os.getcwd()
+    o = open(outputFile, 'a')
+    c = open(cwd + "/Machine_Learning/Combined_contacts_by_any/" + pdbFile + ".txt")
+
+    polar = ["O", "N", "S"]
+    nonpolar = ["C"]
+
+    nonpolarRes = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "TYR", "CYS"]
+    polarRes = ["SER", "THR", "ASN", "GLN"]
+    positiveRes = ["LYS", "ARG","HIS"]
+    negativeRes = ["ASP", "GLU"]
+
+    contactTypes = [0,0,0]
+    count = [0,0,0]
+
+    lines = c.readlines()
+    countTot = 0
+    for distance in lines:
+        distance = distance.split(' ')
+        if float(distance[0]) <= cutoff:
+            countTot += 1
+
+            nonpolarFirst = distance[3][:3] in nonpolarRes
+            nonpolarSecond = distance[4][:3] in nonpolarRes
+            polarFirst = distance[3][:3] in polarRes
+            polarSecond = distance[4][:3] in polarRes
+            positiveFirst = distance[3][:3] in positiveRes
+            positiveSecond = distance[4][:3] in positiveRes
+            negativeFirst = distance[3][:3] in negativeRes
+            negativeSecond = distance[4][:3] in negativeRes
+
+            if (polarFirst or polarSecond) and (nonpolarFirst or nonpolarSecond):
+                if distance[1][0] == "C":
+                    count[0] += 1
+                elif distance[1][0] == "N":
+                    count[1] += 1
+                elif distance[1][0] == "O":
+                    count[2] += 1
+
+                if distance[2][0] == "C":
+                    count[0] += 1
+                elif distance[2][0] == "N":
+                    count[1] += 1
+                elif distance[2][0] == "O":
+                    count[2] += 1
+                
+                if distance[1][0] in polar and distance[2][0] in polar:
+                    contactTypes[0] += 1
+                elif (distance[1][0] in polar and distance[2][0] in nonpolar) or (distance[1][0] in nonpolar and distance[2][0] in polar):
+                    contactTypes[1] += 1
+                elif distance[1][0] in nonpolar and distance[2][0] in nonpolar:
+                    contactTypes[2] += 1
+        else:
+            break
+    
+    o.write(str(count[0]) + " " + str(count[1]) + " " + str(count[2]) + " ")
+    # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
+    # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(sum(contactTypes)) + " ")
+    # o.write(str(sum(contactTypes)) + " ")
+    o.close()
+
+def allAtoms(pdbFile, outputFile):
+    cwd = os.getcwd()
+    parser = PDBParser(PERMISSIVE=True, QUIET=True)
+    # struct = parser.get_structure(pdbFile, cwd + "/PRODIGY_Dataset/" + pdbFile + ".pdb")
+    struct = parser.get_structure(
+        pdbFile, cwd + "/Combined_Dataset/" + pdbFile + ".pdb")
+    model = struct[0]
+    f = open(outputFile, 'a')
+
+    residuesFirst = list(list(model)[0])
+    residuesSecond = list(list(model)[1])
+
+    all = ["GLY", "ALA", "PRO", "VAL", "ILE", "MET", "PHE", "LEU", "TRP", "SER",
+           "THR", "CYS", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "ASP", "GLU"]
+
+    # residue identifier, atoms in residue
+    atomsList = []
+    for i in range(len(residuesFirst)):
+        if residuesFirst[i].get_resname() not in all or residuesFirst[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesFirst[i].get_atoms())
+        atomsList.extend(atoms)
+    for i in range(len(residuesSecond)):
+        if residuesSecond[i].get_resname() not in all or residuesSecond[i].get_full_id()[3][2] != " ":
+            continue
+        atoms = list(residuesSecond[i].get_atoms())
+        atomsList.extend(atoms)
+    
+    count = [0,0,0]
+    for atom in atomsList:
+        if atom.name[0] == "C":
+            count[0] += 1
+        elif atom.name[0] == "N":
+            count[1] += 1
+        elif atom.name[0] == "O":
+            count[2] += 1
+    
+    o.write(str(count[0]) + " " + str(count[1]) + " " + str(count[2]) + " ")
+
+
 """ cwd = os.getcwd()
 o = open(cwd + "/Machine_Learning/data.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined171.csv") as csv_file:
@@ -717,33 +839,36 @@ while cutoff <= 20:
         line_count = 0
         for row in csv_reader:
             if line_count > 0:
-                classifyHeavyByAny(row[0][0:4], cutoff, cwd + "/Machine_Learning/data2.txt")
+                classifyHeavyByRes(row[0][0:4], cutoff, cwd + "/Machine_Learning/data2.txt")
                 # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n")
                 o.write(row[3] + "\n") # row[4] + " " + row[5] + " " + row[6] + " " + 
                 # o.write("\n")
                 o.flush()
             line_count += 1
-        train(1,81,141,0.5)
+        train(3,81,141,0.5)
         cutoff += 0.25 """
 
 # loop through dataset        
 
 cwd = os.getcwd()
-o = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", 'a')
+o = open(cwd + "/Machine_Learning/data2.txt", 'a')
 with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     o.truncate(0)
     for row in csv_reader:
         if line_count > 0:
+            atomByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/data2.txt")
+            o.write("\n")
+            o.flush()
+            """ 
             # getContactResidues(row[0][0:4], 4.75, cwd + "/Machine_Learning/output.txt")
-            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
-            # getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
-            # classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            classifyHeavyByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHIProd.txt")
+            getHydrogenBonds(row[0][0:4], 3.5, cwd + "/Machine_Learning/allFeaturesHIProd.txt")
+            classifyHeavyByAny(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHIProd.txt")
             # o.write(row[14] + " " + row[15] + " " + row[16] + " " + row[3] + "\n") # row[14] + " " + row[15] + " " + row[16] + " " + 
-            # o.write(row[4] + " " + row[5] + " " + row[6] + " ")
-            o.flush()
-            # getHI(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
+            o.write(row[14] + " " + row[15] + " " + row[16] + " ")
+            getHI(row[0][0:4], 4.75, cwd + "/Machine_Learning/allFeaturesHICombined.txt")
             o.write(row[3] + "\n")
-            o.flush()
+            o.flush() """
         line_count += 1
