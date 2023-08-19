@@ -19,9 +19,6 @@ from random import sample
 import tqdm
 from matplotlib import pyplot
 
-import torch
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 def train(n,size1,size2,a):
 
     cwd = os.getcwd()
@@ -63,7 +60,7 @@ def train(n,size1,size2,a):
             count += 1 """
 
     scaler = StandardScaler()
-    # x = scaler.fit_transform(x)
+    x = scaler.fit_transform(x)
     # print(x)
     # y = np.log(y*-1)
     
@@ -84,19 +81,16 @@ def train(n,size1,size2,a):
     for fimportance in fi:
         f.write(str(fimportance/100) + "\n") """
 
-    # print(pearsonr(np.reshape(x,141),np.reshape(y,141)))
     x = sm.add_constant(x)
     # xt = sm.add_constant(xt)
-    # model = sm.Logit(y,x)
     model = sm.OLS(y,x)
-    # results = model.fit_regularized(alpha=a,L1_wt=0)
     results = model.fit()
     
 
     # print(str(spearmanr(results.predict(x),y).correlation) + " " + str(spearmanr(results.predict(x),y).pvalue))
 
-    """ for i in range(0,n+1):
-        print(str(statsmodels.stats.outliers_influence.variance_inflation_factor(x, i))) """
+    for i in range(0,n+1):
+        print(str(statsmodels.stats.outliers_influence.variance_inflation_factor(x, i)))
 
 
     """ pinv_wexog,_ = pinv_extended(model.wexog)
@@ -108,9 +102,7 @@ def train(n,size1,size2,a):
 
     f.write(str(results.summary()) + "\n")
 
-    
-    
-    """ sumtot = 0
+    sumtot = 0
     for i in range(0,10):
         kf = KFold(n_splits=4, shuffle=True)
         sum = 0
@@ -129,11 +121,11 @@ def train(n,size1,size2,a):
         f.write(str(sum/4) + "\n")
     
     # f.write(str(sumtot/40) + "\n") 
-    f.write("\n") """
+    f.write("\n")
     
 
-    """ for pred in results.predict(x):
-        f.write(str(pred) + "\n") """
+    for pred in results.predict(x):
+        f.write(str(pred) + "\n")
     
     """ for pred in results.predict(xt):
         f.write(str(pred) + "\n")     """

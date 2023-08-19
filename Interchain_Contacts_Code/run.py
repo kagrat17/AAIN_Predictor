@@ -404,64 +404,9 @@ def ca_res():
     f.close()
     o.close()
 
-
-# making the list of subsets of features
-
-def decimalToBinary(n):   # converting decimal to binary
-    b = 0
-    i = 1
-    while (n != 0):
-        r = n % 2
-        b += r * i
-        n //= 2
-        i = i * 10
-    return b
-
-def makeList(k):       # list of the binary element produced
-    a = []
-    if (k == 0):
-        a.append(0)
-    while (k > 0):
-        a.append(k % 10)
-        k //= 10
-    a.reverse()
-    return a
-
-
-def checkBinary(bin, l):
-    temp = []
-    for i in range(len(bin)):
-        if (bin[i] == 1):
-            temp.append(l[i])
-    return temp
-
-subsets = []
-
-def combinations():
-    l = [0,1,2,4,6,7,10,15,18]
-    binlist = []
-    n = len(l)
-    for i in range(2**n):
-        print(i)
-        s = decimalToBinary(i)
-        arr = makeList(s)
-
-        binlist.append(arr)
-
-        for i in binlist:
-
-            k = 0
-
-            while (len(i) != n):
-                i.insert(k, 0)
-                k = k + 1
-
-    for i in binlist:
-        subsets.append(checkBinary(i, l))
-
 def LR(arr):
     cwd = os.getcwd()
-    f = open(cwd + "/Machine_Learning/er.txt", "r")
+    f = open(cwd + "/Machine_Learning/contactsAA.txt", "r")
     g = open(cwd + "/Machine_Learning/allFeaturesHICombined.txt", "r")
     data = f.readlines()
     data2 = g.readlines()
@@ -485,17 +430,20 @@ def LR(arr):
 
 
     o.truncate(0)
+    lineCount = 1
     for line, line2 in zip(data,data2):
-        line = line.split("\t")
-        line2 = line2.split(" ")
-        for num in arr:
-            if num >= 20:
-                o.write(line2[num-20] + " ")
-            else:
-                o.write(line[num] + " ")
-        # o.write(line[13])
-        o.write(line[20])
-        o.flush()
+        if lineCount > 0:
+            line = line.split("\t")
+            line2 = line2.split(" ")
+            for num in arr:
+                # o.write(line[num] + " ")
+                if num >= 20:
+                    o.write(line2[num-20] + " ")
+                else:
+                    o.write(line[num] + " ")
+            o.write(line[20])
+            o.flush()
+        lineCount += 1
     o.close()
 
 cwd = os.getcwd()
@@ -504,7 +452,7 @@ ot = open(cwd + "/Machine_Learning/output.txt", 'a')
 # all subsets
 # ot.truncate(0)
 
-# s = set([0,1,4,5,6,7,10,18,21,22,23,24,25,26,27,30,33])
+# s = set([1,7,9,15,18,19,20,22,23,24,26,27,28,29,30,31,32,33])
 # combos = sum(map(lambda r: list(itertools.combinations(s, r)), range(1, len(s)+1)), [])
 
 # combinations()
@@ -522,12 +470,12 @@ while i < len(combos):
 
 # specific subset
 
-subset = [0, 33, 4, 6, 10, 18, 21, 22, 23, 24, 25, 26, 27, 30]
+subset = [21,22,23,24,25,26,27,30,33]
 # subset = [8]
 # ot.write(str(subset) + "\t")
 # ot.flush()
 LR(subset)
-train(14,81,141,1.740)
+train(9,81,141,1.740)
 ot.write("\n")
 ot.flush()
 
