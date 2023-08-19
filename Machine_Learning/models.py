@@ -64,7 +64,7 @@ def train(n,size1,size2,a):
     # print(x)
     # y = np.log(y*-1)
     
-    """ rf = RandomForestRegressor()
+    rf = RandomForestRegressor()
     fi = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     for i in range(0,100):
         rf.fit(x,y)
@@ -79,7 +79,7 @@ def train(n,size1,size2,a):
         
     f.write("\n")
     for fimportance in fi:
-        f.write(str(fimportance/100) + "\n") """
+        f.write(str(fimportance/100) + "\n")
 
     x = sm.add_constant(x)
     # xt = sm.add_constant(xt)

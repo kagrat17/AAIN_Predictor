@@ -501,9 +501,9 @@ def classifyHeavyByRes(pdbFile, cutoff, outputFile):
                 HITypes[0] += 1
             elif HIscaledDiff < 0:
                 HITypes[1] += 1
-    o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
+    # o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " ")
     # o.write(str(contactTypes[0] + contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(contactTypes[3]) + " " + str(contactTypes[4]) + " " + str(contactTypes[5]) + " " + str(contactTypes[6]) + " " + str(sum(contactTypes)) + " ")
-    # o.write(str(sum(contactTypes)) + " ")
+    o.write(str(sum(contactTypes)) + " ")
     # o.write(str(tyr[3]) + " " + str(tyr[5]) + " " + str(tyr[6]) + " ")
     o.close()
 
@@ -550,10 +550,10 @@ def classifyHeavyByAny(pdbFile, cutoff, outputFile):
         else:
             break
 
-    o.write(str(count[0]) + " " + str(count[1]) + " " + str(count[2]) + " ")
+    # o.write(str(count[0]) + " " + str(count[1]) + " " + str(count[2]) + " ")
     # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " ")
     # o.write(str(contactTypes[0]) + " " + str(contactTypes[1]) + " " + str(contactTypes[2]) + " " + str(sum(contactTypes)) + " ")
-    # o.write(str(sum(contactTypes)) + " ")
+    o.write(str(sum(contactTypes)) + " ")
     o.close()
 
 # Gets total number of each type of residue in the complex
@@ -858,7 +858,7 @@ with open(cwd + "/Combined_Dataset/Combined141.csv") as csv_file:
     o.truncate(0)
     for row in csv_reader:
         if line_count > 0:
-            atomByRes(row[0][0:4], 4.75, cwd + "/Machine_Learning/data2.txt")
+            classifyHeavyByAny(row[0][0:4], 10, cwd + "/Machine_Learning/data2.txt")
             o.write("\n")
             o.flush()
             """ 
