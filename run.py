@@ -15,7 +15,7 @@ def getAAINs(pdbFile, chains):
     cwd = os.getcwd()
     parser = PDBParser(PERMISSIVE=True, QUIET=True)
     struct = parser.get_structure(
-        pdbFile, cwd + "/pdbFiles/pdb" + pdbFile + ".ent")
+        pdbFile, cwd + "/pdbFiles/pdb" + pdbFile + ".ent") # this can also be a .pdb file.
     model = struct[0]
 
     # use given chains
