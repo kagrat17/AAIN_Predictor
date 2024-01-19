@@ -82,7 +82,7 @@ def getAAINs(pdbFile, chains):
 
 # takes a dictionary of the six interface numbers and predicts Delta G
 def predictFromINs(INs):
-    return -0.1535*INs["GLY"] - 0.1288*INs["GLY"] - 0.0840*INs["SER"] - 0.0805*INs["ARG"] - 0.0684*INs["VAL"]  + 0.073*INs["ILE"]  - 6.46
+    return -0.1535*INs["TYR"] - 0.1288*INs["GLY"] - 0.0840*INs["SER"] - 0.0805*INs["ARG"] - 0.0684*INs["VAL"]  + 0.073*INs["ILE"]  - 6.46
 
 # takes in a pdb file, downloads it, and returns a prediction
 def predict(name, chains=None):
