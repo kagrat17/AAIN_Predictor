@@ -2,6 +2,8 @@
 
 This repository contains to code to make a Delta G prediction for a protein-protein complex given a PDB file. It calculates interface numbers for six amino acids and makes a prediction with a linear regression equation that was found by training models on a dataset of 141 complexes.
 
+Paper: https://pubs.acs.org/doi/10.1021/acsomega.3c06996
+
 ## Functions
 
 ### predict(name, chains=None)
